@@ -128,11 +128,14 @@ class App extends Component {
       </ObjectInfo>
     </DieCutLabel>`;
 
-    // console.log(labelXml);
+    console.log(barcodeData);
     const label = window.dymo.label.framework.openLabelXml(labelXml);
     label.setObjectText('BARCODE', barcodeData.toUpperCase());
     label.setObjectText('TEXT_1', plate.toUpperCase());
     label.print('DYMO LabelWriter 400');
+    // setTimeout(() => {
+    //   label.print('DYMO LabelWriter 400');
+    // }, 2000);
     // window.dymo.print('DYMO LabelWriter 400', labelXml);
   }
 
@@ -173,7 +176,7 @@ class App extends Component {
                     id="licensePlate"
                     required
                     data-validation-required-message="Please enter License Plate #."
-                    onKeyPress={(e) => {
+                    onKeyUp={(e) => {
                       this.setState({ plate: e.target.value })
                     }}
                   />
