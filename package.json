@@ -11,9 +11,7 @@
     "start": "react-scripts-parcel start",
     "build": "react-scripts-parcel build",
     "test": "react-scripts-parcel test --env=jsdom",
-    "eject": "react-scripts-parcel eject",
-    "heroku-prebuild": "npm install",
-    "heroku-postbuild": "rm -rf dist"
+    "eject": "react-scripts-parcel eject"
   },
   "browserslist": {
     "development": [
