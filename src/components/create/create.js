@@ -19,7 +19,6 @@ class Create extends Component {
     // const timeStamp = moment(d).format('h:mma');
     const timeStamp = new Date();
     const barcodeData = plate + ',' + timeStamp;
-
     const labelXml = `<?xml version="1.0" encoding="utf-8"?>
     <DieCutLabel Version="8.0" Units="twips" MediaType="Default">
       <PaperOrientation>Landscape</PaperOrientation>
@@ -48,7 +47,7 @@ class Create extends Component {
           <HorizontalAlignment>Center</HorizontalAlignment>
           <QuietZonesPadding Left="0" Right="0" Top="0" Bottom="0"/>
         </BarcodeObject>
-        <Bounds X="600.1843" Y="517.4437" Width="693.9624" Height="716.0938"/>
+        <Bounds X="331.2" Y="103.6937" Width="1547.791" Height="1297.309"/>
       </ObjectInfo>
       <ObjectInfo>
         <DateTimeObject>
@@ -61,17 +60,17 @@ class Create extends Component {
           <IsVariable>False</IsVariable>
           <HorizontalAlignment>Left</HorizontalAlignment>
           <VerticalAlignment>Middle</VerticalAlignment>
-          <TextFitMode>AlwaysFit</TextFitMode>
+          <TextFitMode>None</TextFitMode>
           <UseFullFontHeight>True</UseFullFontHeight>
           <Verticalized>False</Verticalized>
           <DateTimeFormat>DayAbbrMonthYear</DateTimeFormat>
-          <Font Family="Helvetica" Size="13" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
+          <Font Family="Helvetica" Size="10" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
           <PreText></PreText>
           <PostText></PostText>
           <IncludeTime>True</IncludeTime>
           <Use24HourFormat>False</Use24HourFormat>
         </DateTimeObject>
-        <Bounds X="1465.028" Y="886.0031" Width="2851.619" Height="282.6562"/>
+        <Bounds X="1871.981" Y="906.55" Width="2851.619" Height="282.6562"/>
       </ObjectInfo>
       <ObjectInfo>
         <TextObject>
@@ -84,20 +83,20 @@ class Create extends Component {
           <IsVariable>False</IsVariable>
           <HorizontalAlignment>Left</HorizontalAlignment>
           <VerticalAlignment>Middle</VerticalAlignment>
-          <TextFitMode>ShrinkToFit</TextFitMode>
+          <TextFitMode>None</TextFitMode>
           <UseFullFontHeight>True</UseFullFontHeight>
           <Verticalized>False</Verticalized>
           <StyledText>
             <Element>
-              <String>St Philip and St James Car Park</String>
+              <String>St Philip &amp; St James Car Park</String>
               <Attributes>
-                <Font Family="Helvetica" Size="13" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
+                <Font Family="Helvetica" Size="11" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
                 <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
               </Attributes>
             </Element>
           </StyledText>
         </TextObject>
-        <Bounds X="528.7781" Y="57.59995" Width="3956.697" Height="402.4219"/>
+        <Bounds X="1879.403" Y="152.9906" Width="2995.681" Height="645.8594"/>
       </ObjectInfo>
       <ObjectInfo>
         <TextObject>
@@ -117,13 +116,13 @@ class Create extends Component {
             <Element>
               <String>PBA 1234</String>
               <Attributes>
-                <Font Family="Helvetica" Size="13" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
+                <Font Family="Helvetica" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
                 <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
               </Attributes>
             </Element>
           </StyledText>
         </TextObject>
-        <Bounds X="1465.653" Y="486.9749" Width="1375.938" Height="493.9844"/>
+        <Bounds X="1881.278" Y="533.928" Width="1381.641" Height="493.9844"/>
       </ObjectInfo>
     </DieCutLabel>`;
 
@@ -131,7 +130,7 @@ class Create extends Component {
     const label = window.dymo.label.framework.openLabelXml(labelXml);
     label.setObjectText('BARCODE', barcodeData.toUpperCase());
     label.setObjectText('TEXT_1', plate.toUpperCase());
-    // label.print('DYMO LabelWriter 400');
+    label.print('DYMO LabelWriter 400');
     // setTimeout(() => {
     //   label.print('DYMO LabelWriter 400');
     // }, 2000);
