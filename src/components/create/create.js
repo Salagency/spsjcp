@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-// import Dymo from 'dymojs';
-// import logo from './logo.svg';
-import './App.css';
+import './create.css';
 
-class App extends Component {
+class Create extends Component {
   constructor(props) {
     super(props);
 
@@ -18,8 +16,9 @@ class App extends Component {
   handleCreateTicket() {
     const { plate } = this.state;
     const d = new Date();
-    const timeStamp = moment(d).format('h.mma');
-    const barcodeData = plate + ' ' + timeStamp;
+    // const timeStamp = moment(d).format('h:mma');
+    const timeStamp = new Date();
+    const barcodeData = plate + ',' + timeStamp;
 
     const labelXml = `<?xml version="1.0" encoding="utf-8"?>
     <DieCutLabel Version="8.0" Units="twips" MediaType="Default">
@@ -132,7 +131,7 @@ class App extends Component {
     const label = window.dymo.label.framework.openLabelXml(labelXml);
     label.setObjectText('BARCODE', barcodeData.toUpperCase());
     label.setObjectText('TEXT_1', plate.toUpperCase());
-    label.print('DYMO LabelWriter 400');
+    // label.print('DYMO LabelWriter 400');
     // setTimeout(() => {
     //   label.print('DYMO LabelWriter 400');
     // }, 2000);
@@ -155,6 +154,9 @@ class App extends Component {
           <div className="container">
             <div className="row">
               <div className="col-lg-8 col-md-10 mx-auto">
+                <div className="page-heading">
+                  <a href="/">Home</a>
+                </div>
                 <div className="page-heading">
                   <h1>Enter Details</h1>
                 </div>
@@ -212,4 +214,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default Create;
