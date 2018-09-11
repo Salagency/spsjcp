@@ -27,7 +27,7 @@ class Scan extends Component {
     let opts = {
       continuous: true,
       video: document.getElementById('preview'),
-      mirror: true,
+      mirror: false,
       captureImage: false,
       backgroundScan: true,
       refractoryPeriod: 5000,
