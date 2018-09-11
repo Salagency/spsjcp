@@ -1,6 +1,20 @@
 import React, { Component } from 'react';
-import moment from 'moment';
+// import moment from 'moment';
 import './create.css';
+
+// Spend
+// Printer 120.95
+// 2 Rolls of paper $5.95 X 2
+// Tablet $169.59
+// Case - pending
+// Stand - pending
+
+// notes
+// Add text in small print which says "Keep this ticket on your person. Do not leave in your vehicle at any time"
+// Need to hand scenarios:
+// ticket is damaged
+// ticket is lost
+// car stays longer than one day
 
 class Create extends Component {
   constructor(props) {
@@ -15,122 +29,184 @@ class Create extends Component {
 
   handleCreateTicket() {
     const { plate } = this.state;
-    const d = new Date();
+    // const d = new Date();
     // const timeStamp = moment(d).format('h:mma');
     const timeStamp = new Date();
     const barcodeData = plate + ',' + timeStamp;
     const labelXml = `<?xml version="1.0" encoding="utf-8"?>
-    <DieCutLabel Version="8.0" Units="twips" MediaType="Default">
-      <PaperOrientation>Landscape</PaperOrientation>
-      <Id>Address</Id>
-      <PaperName>30252 Address</PaperName>
-      <DrawCommands>
-        <RoundRectangle X="0" Y="0" Width="1581" Height="5040" Rx="270" Ry="270"/>
-      </DrawCommands>
-      <ObjectInfo>
-        <BarcodeObject>
-          <Name>BARCODE</Name>
-          <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
-          <BackColor Alpha="255" Red="255" Green="255" Blue="255"/>
-          <LinkedObjectName></LinkedObjectName>
-          <Rotation>Rotation0</Rotation>
-          <IsMirrored>False</IsMirrored>
-          <IsVariable>False</IsVariable>
-          <Text>PBA 1234, 4:49PM</Text>
-          <Type>QRCode</Type>
-          <Size>Large</Size>
-          <TextPosition>None</TextPosition>
-          <TextFont Family="Helvetica" Size="10" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
-          <CheckSumFont Family="Helvetica" Size="10" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
-          <TextEmbedding>None</TextEmbedding>
-          <ECLevel>0</ECLevel>
-          <HorizontalAlignment>Center</HorizontalAlignment>
-          <QuietZonesPadding Left="0" Right="0" Top="0" Bottom="0"/>
-        </BarcodeObject>
-        <Bounds X="331.2" Y="103.6937" Width="1547.791" Height="1297.309"/>
-      </ObjectInfo>
-      <ObjectInfo>
-        <DateTimeObject>
-          <Name>DATE-TIME</Name>
-          <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
-          <BackColor Alpha="0" Red="255" Green="255" Blue="255"/>
-          <LinkedObjectName></LinkedObjectName>
-          <Rotation>Rotation0</Rotation>
-          <IsMirrored>False</IsMirrored>
-          <IsVariable>False</IsVariable>
-          <HorizontalAlignment>Left</HorizontalAlignment>
-          <VerticalAlignment>Middle</VerticalAlignment>
-          <TextFitMode>None</TextFitMode>
-          <UseFullFontHeight>True</UseFullFontHeight>
-          <Verticalized>False</Verticalized>
-          <DateTimeFormat>DayAbbrMonthYear</DateTimeFormat>
-          <Font Family="Helvetica" Size="10" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
-          <PreText></PreText>
-          <PostText></PostText>
-          <IncludeTime>True</IncludeTime>
-          <Use24HourFormat>False</Use24HourFormat>
-        </DateTimeObject>
-        <Bounds X="1871.981" Y="906.55" Width="2851.619" Height="282.6562"/>
-      </ObjectInfo>
-      <ObjectInfo>
-        <TextObject>
-          <Name>TEXT</Name>
-          <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
-          <BackColor Alpha="0" Red="255" Green="255" Blue="255"/>
-          <LinkedObjectName></LinkedObjectName>
-          <Rotation>Rotation0</Rotation>
-          <IsMirrored>False</IsMirrored>
-          <IsVariable>False</IsVariable>
-          <HorizontalAlignment>Left</HorizontalAlignment>
-          <VerticalAlignment>Middle</VerticalAlignment>
-          <TextFitMode>None</TextFitMode>
-          <UseFullFontHeight>True</UseFullFontHeight>
-          <Verticalized>False</Verticalized>
-          <StyledText>
-            <Element>
-              <String>St Philip &amp; St James Car Park</String>
-              <Attributes>
-                <Font Family="Helvetica" Size="11" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
-                <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
-              </Attributes>
-            </Element>
-          </StyledText>
-        </TextObject>
-        <Bounds X="1879.403" Y="152.9906" Width="2995.681" Height="645.8594"/>
-      </ObjectInfo>
-      <ObjectInfo>
-        <TextObject>
-          <Name>TEXT_1</Name>
-          <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
-          <BackColor Alpha="0" Red="255" Green="255" Blue="255"/>
-          <LinkedObjectName></LinkedObjectName>
-          <Rotation>Rotation0</Rotation>
-          <IsMirrored>False</IsMirrored>
-          <IsVariable>False</IsVariable>
-          <HorizontalAlignment>Left</HorizontalAlignment>
-          <VerticalAlignment>Middle</VerticalAlignment>
-          <TextFitMode>ShrinkToFit</TextFitMode>
-          <UseFullFontHeight>True</UseFullFontHeight>
-          <Verticalized>False</Verticalized>
-          <StyledText>
-            <Element>
-              <String>PBA 1234</String>
-              <Attributes>
-                <Font Family="Helvetica" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
-                <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
-              </Attributes>
-            </Element>
-          </StyledText>
-        </TextObject>
-        <Bounds X="1881.278" Y="533.928" Width="1381.641" Height="493.9844"/>
-      </ObjectInfo>
-    </DieCutLabel>`;
+    <ContinuousLabel Version="8.0" Units="twips">
+      <PaperOrientation>Portrait</PaperOrientation>
+      <Id>Continuous</Id>
+      <PaperName>30270 Continuous</PaperName>
+      <LengthMode>Auto</LengthMode>
+      <LabelLength>0</LabelLength>
+      <RootCell>
+        <Length>0</Length>
+        <LengthMode>Auto</LengthMode>
+        <BorderWidth>0</BorderWidth>
+        <BorderStyle>Solid</BorderStyle>
+        <BorderColor Alpha="255" Red="0" Green="0" Blue="0"/>
+        <SubcellsOrientation>Vertical</SubcellsOrientation>
+        <Subcells>
+          <Cell>
+            <TextObject>
+              <Name>TEXT</Name>
+              <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
+              <BackColor Alpha="0" Red="255" Green="255" Blue="255"/>
+              <LinkedObjectName></LinkedObjectName>
+              <Rotation>Rotation0</Rotation>
+              <IsMirrored>False</IsMirrored>
+              <IsVariable>False</IsVariable>
+              <HorizontalAlignment>Center</HorizontalAlignment>
+              <VerticalAlignment>Middle</VerticalAlignment>
+              <TextFitMode>None</TextFitMode>
+              <UseFullFontHeight>True</UseFullFontHeight>
+              <Verticalized>False</Verticalized>
+              <StyledText>
+                <Element>
+                  <String>St Philip and St James Car Park</String>
+                  <Attributes>
+                    <Font Family="Calibri" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
+                    <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
+                  </Attributes>
+                </Element>
+              </StyledText>
+            </TextObject>
+            <ObjectMargin Left="0" Right="0" Top="0" Bottom="0"/>
+            <Length>521.6</Length>
+            <LengthMode>Auto</LengthMode>
+            <BorderWidth>0</BorderWidth>
+            <BorderStyle>Solid</BorderStyle>
+            <BorderColor Alpha="255" Red="0" Green="0" Blue="0"/>
+          </Cell>
+          <Cell>
+            <BarcodeObject>
+              <Name>BARCODE</Name>
+              <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
+              <BackColor Alpha="255" Red="255" Green="255" Blue="255"/>
+              <LinkedObjectName></LinkedObjectName>
+              <Rotation>Rotation0</Rotation>
+              <IsMirrored>False</IsMirrored>
+              <IsVariable>False</IsVariable>
+              <Text>PCA 9999</Text>
+              <Type>QRCode</Type>
+              <Size>Large</Size>
+              <TextPosition>None</TextPosition>
+              <TextFont Family="Helvetica" Size="13" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
+              <CheckSumFont Family="Helvetica" Size="10" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
+              <TextEmbedding>None</TextEmbedding>
+              <ECLevel>0</ECLevel>
+              <HorizontalAlignment>Center</HorizontalAlignment>
+              <QuietZonesPadding Left="0" Right="0" Top="0" Bottom="0"/>
+            </BarcodeObject>
+            <ObjectMargin Left="0" Right="0" Top="0" Bottom="0"/>
+            <Length>1205.972</Length>
+            <LengthMode>Fixed</LengthMode>
+            <BorderWidth>0</BorderWidth>
+            <BorderStyle>Solid</BorderStyle>
+            <BorderColor Alpha="255" Red="0" Green="0" Blue="0"/>
+          </Cell>
+          <Cell>
+            <TextObject>
+              <Name>TEXT_1</Name>
+              <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
+              <BackColor Alpha="0" Red="255" Green="255" Blue="255"/>
+              <LinkedObjectName></LinkedObjectName>
+              <Rotation>Rotation0</Rotation>
+              <IsMirrored>False</IsMirrored>
+              <IsVariable>False</IsVariable>
+              <HorizontalAlignment>Center</HorizontalAlignment>
+              <VerticalAlignment>Middle</VerticalAlignment>
+              <TextFitMode>None</TextFitMode>
+              <UseFullFontHeight>True</UseFullFontHeight>
+              <Verticalized>False</Verticalized>
+              <StyledText>
+                <Element>
+                  <String>PCA 9999</String>
+                  <Attributes>
+                    <Font Family="Calibri" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
+                    <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
+                  </Attributes>
+                </Element>
+              </StyledText>
+            </TextObject>
+            <ObjectMargin Left="0" Right="0" Top="0" Bottom="0"/>
+            <Length>700</Length>
+            <LengthMode>Auto</LengthMode>
+            <BorderWidth>0</BorderWidth>
+            <BorderStyle>Solid</BorderStyle>
+            <BorderColor Alpha="255" Red="0" Green="0" Blue="0"/>
+          </Cell>
+          <Cell>
+            <DateTimeObject>
+              <Name>DATE-TIME</Name>
+              <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
+              <BackColor Alpha="0" Red="255" Green="255" Blue="255"/>
+              <LinkedObjectName></LinkedObjectName>
+              <Rotation>Rotation0</Rotation>
+              <IsMirrored>False</IsMirrored>
+              <IsVariable>False</IsVariable>
+              <HorizontalAlignment>Center</HorizontalAlignment>
+              <VerticalAlignment>Middle</VerticalAlignment>
+              <TextFitMode>None</TextFitMode>
+              <UseFullFontHeight>True</UseFullFontHeight>
+              <Verticalized>False</Verticalized>
+              <DateTimeFormat>DayAbbrMonthYear</DateTimeFormat>
+              <Font Family="Calibri" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
+              <PreText></PreText>
+              <PostText></PostText>
+              <IncludeTime>True</IncludeTime>
+              <Use24HourFormat>False</Use24HourFormat>
+            </DateTimeObject>
+            <ObjectMargin Left="0" Right="0" Top="0" Bottom="0"/>
+            <Length>817.0312</Length>
+            <LengthMode>Fixed</LengthMode>
+            <BorderWidth>0</BorderWidth>
+            <BorderStyle>Solid</BorderStyle>
+            <BorderColor Alpha="255" Red="0" Green="0" Blue="0"/>
+          </Cell>
+          <Cell>
+            <TextObject>
+              <Name>TEXT_2</Name>
+              <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
+              <BackColor Alpha="0" Red="255" Green="255" Blue="255"/>
+              <LinkedObjectName></LinkedObjectName>
+              <Rotation>Rotation0</Rotation>
+              <IsMirrored>False</IsMirrored>
+              <IsVariable>False</IsVariable>
+              <HorizontalAlignment>Center</HorizontalAlignment>
+              <VerticalAlignment>Middle</VerticalAlignment>
+              <TextFitMode>None</TextFitMode>
+              <UseFullFontHeight>True</UseFullFontHeight>
+              <Verticalized>False</Verticalized>
+              <StyledText>
+                <Element>
+                  <String>Keep this ticket on your person.
+    Do not leave in your vehicle at any time.
+    Not Transferable.</String>
+                  <Attributes>
+                    <Font Family="Calibri" Size="7" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
+                    <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
+                  </Attributes>
+                </Element>
+              </StyledText>
+            </TextObject>
+            <ObjectMargin Left="0" Right="0" Top="0" Bottom="0"/>
+            <Length>680</Length>
+            <LengthMode>Auto</LengthMode>
+            <BorderWidth>0</BorderWidth>
+            <BorderStyle>Solid</BorderStyle>
+            <BorderColor Alpha="255" Red="0" Green="0" Blue="0"/>
+          </Cell>
+        </Subcells>
+      </RootCell>
+    </ContinuousLabel>`;
 
     console.log(barcodeData);
     const label = window.dymo.label.framework.openLabelXml(labelXml);
     label.setObjectText('BARCODE', barcodeData.toUpperCase());
     label.setObjectText('TEXT_1', plate.toUpperCase());
-    label.print('DYMO LabelWriter 400');
+    label.print('DYMO LabelWriter Wireless on DYMOLWW113A9A');
     // setTimeout(() => {
     //   label.print('DYMO LabelWriter 400');
     // }, 2000);
