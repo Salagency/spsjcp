@@ -64,9 +64,26 @@ class Create extends Component {
               <Verticalized>False</Verticalized>
               <StyledText>
                 <Element>
-                  <String>St Philip and St James Car Park</String>
+                  <String>St Philip and St James Car Park
+    </String>
                   <Attributes>
                     <Font Family="Calibri" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
+                    <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
+                  </Attributes>
+                </Element>
+                <Element>
+                  <String>OPENING HOURS
+    </String>
+                  <Attributes>
+                    <Font Family="Calibri" Size="10" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
+                    <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
+                  </Attributes>
+                </Element>
+                <Element>
+                  <String>Mon - Fri 7:00am - 4:00pm
+    Sat 7:00am - 1:00pm</String>
+                  <Attributes>
+                    <Font Family="Calibri" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
                     <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
                   </Attributes>
                 </Element>
@@ -206,7 +223,7 @@ class Create extends Component {
     const label = window.dymo.label.framework.openLabelXml(labelXml);
     label.setObjectText('BARCODE', barcodeData.toUpperCase());
     label.setObjectText('TEXT_1', plate.toUpperCase());
-    label.print('DYMO LabelWriter Wireless on DYMOLWW113A9A');
+    label.print('DYMO LabelWriter Wireless DYMOLWW113A9A');
     // setTimeout(() => {
     //   label.print('DYMO LabelWriter 400');
     // }, 2000);
