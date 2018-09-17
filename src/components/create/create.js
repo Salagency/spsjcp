@@ -1,6 +1,47 @@
 import React, { Component } from 'react';
-// import moment from 'moment';
-import './create.css';
+import PropTypes from 'prop-types';
+import AppBar from '@material-ui/core/AppBar';
+import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import TextField from '@material-ui/core/TextField';
+import MaskedInput from 'react-maskedinput'
+import { withStyles } from '@material-ui/core/styles';
+
+const styles = theme => ({
+  appBar: {
+    position: 'relative',
+  },
+  icon: {
+    marginRight: theme.spacing.unit * 2,
+  },
+  heroUnit: {
+    backgroundColor: theme.palette.background.paper,
+  },
+  heroContent: {
+    maxWidth: 600,
+    margin: '0 auto',
+    padding: `${theme.spacing.unit * 8}px 0 ${theme.spacing.unit * 6}px`,
+  },
+  heroButtons: {
+    marginTop: theme.spacing.unit * 4,
+  },
+  formControl: {
+    margin: theme.spacing.unit,
+    width: '100%',
+  },
+  layout: {
+    width: 'auto',
+    marginLeft: theme.spacing.unit * 3,
+    marginRight: theme.spacing.unit * 3,
+    [theme.breakpoints.up(1100 + theme.spacing.unit * 3 * 2)]: {
+      width: 1100,
+      marginLeft: 'auto',
+      marginRight: 'auto',
+    },
+  }
+});
 
 // Spend
 // Printer 120.95
@@ -15,16 +56,21 @@ import './create.css';
 // ticket is damaged
 // ticket is lost
 // car stays longer than one day
+// Write to local storage if no power
+// Either send email or save to data base
 
 class Create extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      plate: ''
+      plate: '',
+      textmask: '        ',
     };
 
     this.handleCreateTicket = this.handleCreateTicket.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.textMaskCustom = this.textMaskCustom.bind(this);
   }
 
   handleCreateTicket() {
@@ -223,87 +269,118 @@ class Create extends Component {
     const label = window.dymo.label.framework.openLabelXml(labelXml);
     label.setObjectText('BARCODE', barcodeData.toUpperCase());
     label.setObjectText('TEXT_1', plate.toUpperCase());
-    label.print('DYMO LabelWriter Wireless DYMOLWW113A9A');
-    // setTimeout(() => {
-    //   label.print('DYMO LabelWriter 400');
-    // }, 2000);
-    // window.dymo.print('DYMO LabelWriter 400', labelXml);
+    label.print('DYMO LabelWriter Wireless on DYMOLWW113A9A');
   }
 
-  render() {
+  handleChange = name => event => {
+    this.setState({
+      [name]: event.target.value,
+    });
+  };
+
+  textMaskCustom(props) {
+    const { inputRef, ...other } = props;
+
     return (
-      <div className="App">
-        {/* <header classNameName="App-header">
-          <img src={logo} classNameName="App-logo" alt="logo" />
-          <h1 classNameName="App-title">Welcome to React</h1>
-        </header> */}
-        {/* <p classNameName="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p> */}
+      <MaskedInput
+        {...other}
+        ref={inputRef}
+        mask="AAA 1111"
+        name="expiry"
+        placeholder="PBA 1234"
+        onChange={this._onChange}
+      />
+    );
+}
 
-        <header className="masthead">
-          <div className="overlay"></div>
-          <div className="container">
-            <div className="row">
-              <div className="col-lg-8 col-md-10 mx-auto">
-                <div className="page-heading">
-                  <a href="/">Home</a>
-                </div>
-                <div className="page-heading">
-                  <h1>Enter Details</h1>
-                </div>
+  render() {
+    const { classes } = this.props;
+    const { plate } = this.state;
+
+    return (
+      <React.Fragment>
+        <AppBar position="static" className={classes.appBar}>
+          <Toolbar>
+            <Typography variant="title" color="inherit" noWrap>
+              Welcome to the St Philip and St James Carpark System
+            </Typography>
+          </Toolbar>
+        </AppBar>
+
+        <main>
+          {/* Hero unit */}
+          <div className={classes.heroUnit}>
+            <div className={classes.heroContent}>
+              <Typography variant="display2" align="center" color="textSecondary" gutterBottom>
+                Enter License Plate
+              </Typography>
+              <div className={classes.heroButtons}>
+                <Grid container spacing={16} justify="center">
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      required
+                      label="License Plate"
+                      className={classes.formControl}
+                      id="licensePlate"
+                      value={plate}
+                      InputProps={{
+                        inputComponent: this.textMaskCustom,
+                      }}
+                      onKeyUp={(e) => {
+                        this.setState({ plate: e.target.value })
+                      }}
+                    />
+                  </Grid>
+                </Grid>
+                <Grid container spacing={16} justify="center">
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      id="multiline-static"
+                      label="Additonal Notes"
+                      className={classes.formControl}
+                      multiline
+                      rows="4"
+                      placeholder="e.g. White Mazda 323"
+                      margin="normal"
+                    />
+                  </Grid>
+                </Grid>
+                <Grid container spacing={16} justify="center">
+                  <Grid item>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={this.handleCreateTicket}
+                    >
+                      Print
+                    </Button>
+                  </Grid>
+                  <Grid item>
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      href="/scan"
+                    >
+                      Scan
+                    </Button>
+                  </Grid>
+                  <Grid item>
+                    <Button href="/" variant="outlined" color="secondary">
+                      Cancel
+                    </Button>
+                  </Grid>
+                </Grid>
               </div>
             </div>
           </div>
-        </header>
-        <div className="container">
-          <div className="row">
-            <div className="col-lg-8 col-md-10 mx-auto">
-              <div className="control-group">
-                <div className="form-group floating-label-form-group controls">
-                  <label>License Plate</label>
-                  <input
-                    type="text"
-                    className="form-control license-plate"
-                    placeholder="License Plate"
-                    maxLength="8"
-                    id="licensePlate"
-                    required
-                    data-validation-required-message="Please enter License Plate #."
-                    onKeyUp={(e) => {
-                      this.setState({ plate: e.target.value })
-                    }}
-                  />
-                  <p className="help-block text-danger" />
-                </div>
-              </div>
-              <div className="control-group">
-                <div className="form-group floating-label-form-group controls">
-                  <label>Notes</label>
-                  <textarea rows="5" className="form-control" placeholder="Notes" id="notes"></textarea>
-                  <p className="help-block text-danger"></p>
-                </div>
-              </div>
-              <br />
-              <div id="success" />
-              <div className="form-group">
-                <button
-                  className="btn btn-primary"
-                  id="create"
-                  onClick={this.handleCreateTicket}
-                >Create</button>
-              </div>
-              <div className="form-group">
-                <svg id="barcode" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <hr />
-      </div>
+        </main>
+      </React.Fragment>
     );
   }
 }
 
-export default Create;
+Create.propTypes = {
+  classes: PropTypes.object.isRequired
+};
+
+export default withStyles(styles)(Create);
