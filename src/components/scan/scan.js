@@ -93,20 +93,30 @@ class Scan extends Component {
 
   handlePrintReceipt() {
     const { plate, ticketTime, scannedTime, hoursParked } = this.state;
+    const ticketCreationDate = new Date(ticketTime).getDate();
+    const ticketScannedDate = new Date(scannedTime).getDate();
     let totalDays = 0;
     let remaindingHours = 0;
     let newDayFee = 0;
     let totalDue = 0;
 
+
     if (hoursParked < 6) {
       totalDue = hoursParked * 6;
     } else if (hoursParked === 6) {
       totalDue = 35;
-    } else if (hoursParked > 6) {
-      totalDays = Math.floor(hoursParked / 24);
-      remaindingHours = hoursParked % 24;
-      newDayFee = remaindingHours > 6 ? 35 : remaindingHours * 6;
-      totalDue = newDayFee + (totalDays * 35);
+    } else if (hoursParked > 6 && ticketCreationDate < ticketScannedDate) {
+      const timeSpentToday = moment().startOf('day').fromNow();
+      if (timeSpentToday.indexOf('minutes') > -1) {
+        totalDue = 6;
+      } else {
+        totalDays = ticketScannedDate - ticketCreationDate;
+        remaindingHours = (moment().startOf('day').fromNow()).replace('hour ago', '').replace('hours ago', '').replace('minutes ago', '');
+        remaindingHours = remaindingHours - 7;
+        totalDue = remaindingHours * 6 > 35 ? 35 + (totalDays * 35) : remaindingHours * 6 + (totalDays * 35);
+      }
+    } else if (hoursParked > 6 && ticketCreationDate === ticketScannedDate) {
+      totalDue = hoursParked * 6 > 35 ? 35 : hoursParked * 6;
     }
 
     const labelXml = `<?xml version="1.0" encoding="utf-8"?>
@@ -470,20 +480,30 @@ class Scan extends Component {
   render() {
     const { classes } = this.props;
     const { plate, ticketTime, scannedTime, hoursParked } = this.state;
+    const ticketCreationDate = new Date(ticketTime).getDate();
+    const ticketScannedDate = new Date(scannedTime).getDate();
     let totalDays = 0;
     let remaindingHours = 0;
     let newDayFee = 0;
     let totalDue = 0;
 
+
     if (hoursParked < 6) {
       totalDue = hoursParked * 6;
     } else if (hoursParked === 6) {
       totalDue = 35;
-    } else if (hoursParked > 6) {
-      totalDays = Math.floor(hoursParked / 24);
-      remaindingHours = hoursParked % 24;
-      newDayFee = remaindingHours > 6 ? 35 : remaindingHours * 6;
-      totalDue = newDayFee + (totalDays * 35);
+    } else if (hoursParked > 6 && ticketCreationDate < ticketScannedDate) {
+      const timeSpentToday = moment().startOf('day').fromNow();
+      if (timeSpentToday.indexOf('minutes') > -1) {
+        totalDue = 6;
+      } else {
+        totalDays = ticketScannedDate - ticketCreationDate;
+        remaindingHours = (moment().startOf('day').fromNow()).replace('hour ago', '').replace('hours ago', '').replace('minutes ago', '');
+        remaindingHours = remaindingHours - 7;
+        totalDue = remaindingHours * 6 > 35 ? 35 + (totalDays * 35) : remaindingHours * 6 + (totalDays * 35);
+      }
+    } else if (hoursParked > 6 && ticketCreationDate === ticketScannedDate) {
+      totalDue = hoursParked * 6 > 35 ? 35 : hoursParked * 6;
     }
 
     return (
@@ -545,7 +565,7 @@ class Scan extends Component {
                             <CustomTableCell colSpan={5} component="th" scope="row">
                               Rate: $6/hr<br />
                               Total hours: {hoursParked}<br />
-                              {totalDays > 1 ?
+                              {totalDays >= 1 ?
                                 <div>
                                   Days: {`${totalDays}days ${remaindingHours}hours`}<br />
                                   Calculation: {`(${totalDays} days x $35) + (${remaindingHours} hours x $6) to a maximum of $35 per day`}<br />
