@@ -8,6 +8,7 @@
     "dymo": "^0.0.2",
     "dymojs": "^1.1.1",
     "instascan": "^1.0.0",
+    "mailgun-js": "^0.21.0",
     "moment": "^2.22.2",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",

@@ -13,6 +13,8 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import TextField from '@material-ui/core/TextField';
+import MaskedInput from 'react-maskedinput'
 
 import { withStyles } from '@material-ui/core/styles';
 
@@ -54,6 +56,10 @@ const styles = theme => ({
       marginRight: 'auto',
     },
   },
+  formControl: {
+    margin: theme.spacing.unit,
+    width: '100%',
+  },
   root: {
     width: '100%',
     marginTop: theme.spacing.unit * 3,
@@ -75,16 +81,24 @@ class Scan extends Component {
     super(props);
 
     this.state = {
+      searchTerm: '',
       plate: '',
       ticketTime: '',
       scannedTime: '',
-      hoursParked: 0
+      hoursParked: 0,
+      totalDays: 0,
+      remaindingHours: 0,
+      totalDue: 0
     };
 
     this.initCamera = this.initCamera.bind(this);
     this.setTimes = this.setTimes.bind(this);
     this.calculateTime = this.calculateTime.bind(this);
     this.handlePrintReceipt = this.handlePrintReceipt.bind(this);
+    this.textMaskCustom = this.textMaskCustom.bind(this);
+    this.searchPlates = this.searchPlates.bind(this);
+    this.updatePaymentRecord = this.updatePaymentRecord.bind(this);
+    this.calculateFare = this.calculateFare.bind(this);
   }
 
   componentDidMount(props) {
@@ -92,32 +106,7 @@ class Scan extends Component {
   }
 
   handlePrintReceipt() {
-    const { plate, ticketTime, scannedTime, hoursParked } = this.state;
-    const ticketCreationDate = new Date(ticketTime).getDate();
-    const ticketScannedDate = new Date(scannedTime).getDate();
-    let totalDays = 0;
-    let remaindingHours = 0;
-    let newDayFee = 0;
-    let totalDue = 0;
-
-
-    if (hoursParked < 6) {
-      totalDue = hoursParked * 6;
-    } else if (hoursParked === 6) {
-      totalDue = 35;
-    } else if (hoursParked > 6 && ticketCreationDate < ticketScannedDate) {
-      const timeSpentToday = moment().startOf('day').fromNow();
-      if (timeSpentToday.indexOf('minutes') > -1) {
-        totalDue = 6;
-      } else {
-        totalDays = ticketScannedDate - ticketCreationDate;
-        remaindingHours = (moment().startOf('day').fromNow()).replace('hour ago', '').replace('hours ago', '').replace('minutes ago', '');
-        remaindingHours = remaindingHours - 7;
-        totalDue = remaindingHours * 6 > 35 ? 35 + (totalDays * 35) : remaindingHours * 6 + (totalDays * 35);
-      }
-    } else if (hoursParked > 6 && ticketCreationDate === ticketScannedDate) {
-      totalDue = hoursParked * 6 > 35 ? 35 : hoursParked * 6;
-    }
+    const { plate, ticketTime, totalDue } = this.state;
 
     const labelXml = `<?xml version="1.0" encoding="utf-8"?>
     <ContinuousLabel Version="8.0" Units="twips">
@@ -314,7 +303,7 @@ class Scan extends Component {
               <TextFitMode>None</TextFitMode>
               <UseFullFontHeight>True</UseFullFontHeight>
               <Verticalized>False</Verticalized>
-              <DateTimeFormat>DayAbbrMonthYear</DateTimeFormat>
+              <DateTimeFormat>DayAbbrMonthLongYear</DateTimeFormat>
               <Font Family="Calibri" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
               <PreText>Out: </PreText>
               <PostText></PostText>
@@ -417,13 +406,12 @@ class Scan extends Component {
 
     const label = window.dymo.label.framework.openLabelXml(labelXml);
     label.setObjectText('TEXT_4', plate.toUpperCase());
-    label.setObjectText('TEXT_DATE', `In: ${moment(scannedTime).format('MMM DD, YYYY')} ${moment(ticketTime).format('h:mm A')}`);
+    label.setObjectText('TEXT_DATE', `In: ${moment(ticketTime).format('DD-MMM-YYYY')} ${moment(ticketTime).format('h:mm A')}`);
     label.setObjectText('TEXT_2', `Paid: $${totalDue}`);
     label.print('DYMO LabelWriter Wireless on DYMOLWW113A9A');
   }
 
   initCamera() {
-    const self = this;
     let opts = {
       continuous: true,
       video: document.getElementById('preview'),
@@ -434,9 +422,13 @@ class Scan extends Component {
       scanPeriod: 1
     };
     let scanner = new Instascan.Scanner(opts)
-      scanner.addListener('scan', function (content) {
-        self.setTimes(content);
-        // document.getElementById('content').innerHTML = content;
+      scanner.addListener('scan', (ticketTime) => {
+        // Format ticket like this for testing
+        // 'PLATE NUMBER,Date and time (see line below)'
+        // 'PBM 3394,Tue Sep 04 2018 00:10:30 GMT-0400 (Eastern Daylight Time)';
+        // let ticketTime = 'PBM 3394,Tue Sep 04 2018 00:10:30 GMT-0400 (Eastern Daylight Time)';
+        ticketTime = ticketTime.split(',');
+        this.setTimes(ticketTime[0], new Date(ticketTime[1]));
       });
       Instascan.Camera.getCameras().then(function (cameras) {
         if (cameras.length > 0) {
@@ -451,22 +443,13 @@ class Scan extends Component {
       });
   }
 
-  setTimes(content) {
-    // Format ticket like this for testing
-    // 'PLATE NUMBER,Date and time (see line below)'
-    // 'PBM 3394,Tue Sep 04 2018 00:10:30 GMT-0400 (Eastern Daylight Time)';
-    // let ticketTime = 'PBM 3394,Tue Sep 04 2018 00:10:30 GMT-0400 (Eastern Daylight Time)';
-    let ticketTime = content;
-    ticketTime = ticketTime.split(',');
-
+  setTimes(plate, ticketTime) {
     this.setState({
-      plate: ticketTime[0],
-      ticketTime: new Date(ticketTime[1]),
+      plate,
+      ticketTime,
       scannedTime: new Date()
     }, () => {
       const { ticketTime, scannedTime } = this.state;
-      // console.log(ticketTime);
-      // console.log(scannedTime);
       this.calculateTime(ticketTime, scannedTime);
     });
   }
@@ -474,17 +457,64 @@ class Scan extends Component {
   calculateTime(dt1, dt2) {
     var diff =(dt2.getTime() - dt1.getTime()) / 1000;
     diff /= (60 * 60);
-    this.setState({ hoursParked: Math.abs(Math.ceil(diff)) });
+    this.setState({ hoursParked: Math.abs(Math.ceil(diff)) }, () => {
+      this.calculateFare();
+    });
   }
 
-  render() {
-    const { classes } = this.props;
-    const { plate, ticketTime, scannedTime, hoursParked } = this.state;
+  textMaskCustom(props) {
+    const { inputRef, ...other } = props;
+
+    return (
+      <MaskedInput
+        {...other}
+        ref={inputRef}
+        mask="AAA 1111"
+        name="expiry"
+        placeholder="PBA 1234"
+        onChange={this._onChange}
+      />
+    );
+  }
+
+  searchPlates() {
+    let db;
+    const { searchTerm } = this.state;
+    const openRequest = indexedDB.open('CarparkDB', 1);
+    openRequest.onsuccess = (e) => {
+      console.log('running onsuccess');
+      db = e.target.result;
+
+
+      const objectStore = db.transaction(['store'], 'readwrite').objectStore('store');
+      const request = objectStore.get(searchTerm);
+
+
+      request.onerror = (e) => {
+        console.log('Error', e.target.error.name);
+      };
+
+      request.onsuccess = (e) => {
+        const data = e.target.result;
+
+        if (data) {
+          console.log(data);
+          this.setState({ plate: data.plate }, () => {
+            this.setTimes(data.plate, new Date(data.created));
+          });
+        } else {
+          console.log('No Data Found');
+        }
+      };
+    };
+  }
+
+  calculateFare() {
+    const { ticketTime, scannedTime, hoursParked } = this.state;
     const ticketCreationDate = new Date(ticketTime).getDate();
     const ticketScannedDate = new Date(scannedTime).getDate();
     let totalDays = 0;
     let remaindingHours = 0;
-    let newDayFee = 0;
     let totalDue = 0;
 
 
@@ -494,10 +524,11 @@ class Scan extends Component {
       totalDue = 35;
     } else if (hoursParked > 6 && ticketCreationDate < ticketScannedDate) {
       const timeSpentToday = moment().startOf('day').fromNow();
+      totalDays = ticketScannedDate - ticketCreationDate;
+
       if (timeSpentToday.indexOf('minutes') > -1) {
-        totalDue = 6;
+        totalDue = 6 + (totalDays * 35);
       } else {
-        totalDays = ticketScannedDate - ticketCreationDate;
         remaindingHours = (moment().startOf('day').fromNow()).replace('hour ago', '').replace('hours ago', '').replace('minutes ago', '');
         remaindingHours = remaindingHours - 7;
         totalDue = remaindingHours * 6 > 35 ? 35 + (totalDays * 35) : remaindingHours * 6 + (totalDays * 35);
@@ -505,6 +536,56 @@ class Scan extends Component {
     } else if (hoursParked > 6 && ticketCreationDate === ticketScannedDate) {
       totalDue = hoursParked * 6 > 35 ? 35 : hoursParked * 6;
     }
+
+    this.setState({
+      totalDays,
+      remaindingHours,
+      totalDue
+    });
+  }
+
+  updatePaymentRecord() {
+    let db;
+    const { plate, totalDue, scannedTime } = this.state;
+    const openRequest = indexedDB.open('CarparkDB', 1);
+    openRequest.onsuccess = (e) => {
+      console.log('running onsuccess');
+      db = e.target.result;
+      const objectStore = db.transaction(['store'], 'readwrite').objectStore('store');
+      const request = objectStore.get(plate);
+
+      request.onerror = (e) => {
+        console.log('Error', e.target.error.name);
+      };
+
+      request.onsuccess = (e) => {
+        const data = e.target.result;
+
+        if (data) {
+          console.log(data);
+          data.totalDue = totalDue;
+          data.paid = totalDue;
+          data.scannedTime = scannedTime;
+
+          // Put this updated object back into the database.
+          const requestUpdate = objectStore.put(data);
+           requestUpdate.onerror = (e) => {
+             console.log('Error', e.target.error.name);
+           };
+           requestUpdate.onsuccess = (e) => {
+             console.log('record updated');
+             this.handlePrintReceipt();
+           };
+        } else {
+          console.log('No Data Found');
+        }
+      };
+    };
+  }
+
+  render() {
+    const { classes } = this.props;
+    const { searchTerm, plate, ticketTime, scannedTime, hoursParked, totalDays, remaindingHours, totalDue } = this.state;
 
     return (
       <React.Fragment>
@@ -527,15 +608,44 @@ class Scan extends Component {
                   <video id="preview"></video>
                 </Grid>
                 <Grid container spacing={16} justify="center">
+                  <p>OR</p>
+                </Grid>
+                <Grid container spacing={16} justify="center">
+                  <Grid item xs={12} sm={4}>
+                    <TextField
+                      label="Look up by License"
+                      className={classes.formControl}
+                      id="licensePlate"
+                      value={searchTerm}
+                      InputProps={{
+                        inputComponent: this.textMaskCustom,
+                      }}
+                      onKeyUp={(e) => {
+                        this.setState({ searchTerm: e.target.value })
+                      }}
+                    />
+                  </Grid>
+                </Grid>
+                <Grid container spacing={16} justify="center">
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => {
+                      this.searchPlates();
+                    }}
+                  >
+                    Find
+                  </Button>
+                </Grid>
+                <Grid container spacing={16} justify="center">
                   <Paper className={classes.root}>
                     {hoursParked ?
                       <Table className={classes.table}>
                         <TableHead>
                           <TableRow>
                             <CustomTableCell padding="dense">License</CustomTableCell>
-                            <CustomTableCell padding="dense">Date</CustomTableCell>
-                            <CustomTableCell padding="dense" numeric>Time In</CustomTableCell>
-                            <CustomTableCell padding="dense" numeric>Time Out</CustomTableCell>
+                            <CustomTableCell padding="dense">Time In</CustomTableCell>
+                            <CustomTableCell padding="dense">Time Out</CustomTableCell>
                             <CustomTableCell padding="dense" numeric>Total Hours</CustomTableCell>
                             <CustomTableCell padding="dense" numeric>Amount Due</CustomTableCell>
                           </TableRow>
@@ -545,13 +655,14 @@ class Scan extends Component {
                             <CustomTableCell padding="dense" component="th" scope="row">
                               {plate}
                             </CustomTableCell>
-                            <CustomTableCell padding="dense" component="th" scope="row">
-                              {scannedTime ? <div>{moment(scannedTime).format('MMM Do YYYY')}</div> : null}
-                            </CustomTableCell>
-                            <CustomTableCell padding="dense" numeric>
+                            <CustomTableCell padding="dense">
+                              {ticketTime ? <div>{moment(ticketTime).format('MMM Do YYYY')}</div> : null}
+                              <br />
                               {ticketTime ? <div>{moment(ticketTime).format('h:mm a')}</div> : null}
                             </CustomTableCell>
-                            <CustomTableCell padding="dense" numeric>
+                            <CustomTableCell padding="dense">
+                              {scannedTime ? <div>{moment(scannedTime).format('MMM Do YYYY')}</div> : null}
+                              <br />
                               {scannedTime ? <div>{moment(scannedTime).format('h:mm a')}</div> : null}
                             </CustomTableCell>
                             <CustomTableCell padding="dense" numeric>
@@ -590,7 +701,7 @@ class Scan extends Component {
                       <Button
                         variant="contained"
                         color="primary"
-                        onClick={this.handlePrintReceipt}
+                        onClick={this.updatePaymentRecord}
                       >
                         Print Receipt
                       </Button>

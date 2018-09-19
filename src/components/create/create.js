@@ -7,6 +7,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import MaskedInput from 'react-maskedinput'
+// import nodemailer from 'nodemailer';
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
@@ -65,12 +66,18 @@ class Create extends Component {
 
     this.state = {
       plate: '',
-      textmask: '        ',
+      note: '',
+      timeStamp: '',
+      db: null
     };
 
     this.handleCreateTicket = this.handleCreateTicket.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleSaveData = this.handleSaveData.bind(this);
+    this.addItem = this.addItem.bind(this);
     this.textMaskCustom = this.textMaskCustom.bind(this);
+    this.handleSendEmail = this.handleSendEmail.bind(this);
+    this.sendFeedback = this.sendFeedback.bind(this);
   }
 
   handleCreateTicket() {
@@ -269,7 +276,60 @@ class Create extends Component {
     const label = window.dymo.label.framework.openLabelXml(labelXml);
     label.setObjectText('BARCODE', barcodeData.toUpperCase());
     label.setObjectText('TEXT_1', plate.toUpperCase());
-    label.print('DYMO LabelWriter Wireless on DYMOLWW113A9A');
+    // label.print('DYMO LabelWriter Wireless on DYMOLWW113A9A');
+    // this.handleSendEmail();
+    this.setState({ timeStamp }, () =>{
+      this.handleSaveData();
+    })
+  }
+
+  handleSaveData() {
+    if (!('indexedDB' in window)) {
+      console.log('This browser doesn\'t support IndexedDB');
+      return;
+    }
+
+    let db;
+    const openRequest = indexedDB.open('CarparkDB', 1);
+
+    openRequest.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      console.log('running onupgradeneeded');
+      if (!db.objectStoreNames.contains('store')) {
+        const storeOS = db.createObjectStore('store', {keyPath: 'plate'});
+      }
+    };
+    openRequest.onsuccess = (e) => {
+      console.log('running onsuccess');
+      db = e.target.result;
+      this.setState({ db }, () => {
+        this.addItem();
+      })
+    };
+    openRequest.onerror = (e) => {
+      console.log('onerror!');
+      console.dir(e);
+    };
+  }
+
+  addItem() {
+    const { db, plate, note, timeStamp } = this.state;
+    const transaction = db.transaction(['store'], 'readwrite');
+    const store = transaction.objectStore('store');
+    const item = {
+      plate: plate,
+      description: note,
+      created: timeStamp
+    };
+
+   const request = store.add(item);
+
+   request.onerror = (e) => {
+      console.log('Error', e.target.error.name);
+    };
+    request.onsuccess = (e) => {
+      console.log('Woot! Did it');
+    };
   }
 
   handleChange = name => event => {
@@ -291,7 +351,36 @@ class Create extends Component {
         onChange={this._onChange}
       />
     );
-}
+  }
+
+  handleSendEmail (event) {
+    this.sendFeedback(
+      'template_Gfzei7m8',
+      'spsjcp@gmail.com',
+      'spsjcp@gmail.com',
+      'Test email content')
+
+    this.setState({
+      formSubmitted: true
+    })
+  }
+
+  sendFeedback (templateId, senderEmail, receiverEmail, feedback) {
+    window.emailjs.send(
+      'gmail',
+      templateId,
+      {
+        receiverEmail,
+        senderEmail,
+        feedback
+      })
+      .then(res => {
+        console.log(res);
+        this.setState({ formEmailSent: true })
+      })
+      // Handle errors here however you like, or use a React error boundary
+      .catch(err => console.error('Failed to send feedback. Error: ', err))
+  }
 
   render() {
     const { classes } = this.props;
@@ -342,6 +431,9 @@ class Create extends Component {
                       rows="4"
                       placeholder="e.g. White Mazda 323"
                       margin="normal"
+                      onKeyUp={(e) => {
+                        this.setState({ note: e.target.value })
+                      }}
                     />
                   </Grid>
                 </Grid>
@@ -351,6 +443,7 @@ class Create extends Component {
                       variant="contained"
                       color="primary"
                       onClick={this.handleCreateTicket}
+                      disabled={plate.length === 0}
                     >
                       Print
                     </Button>
