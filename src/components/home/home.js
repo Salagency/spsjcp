@@ -10,7 +10,7 @@ import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
   appBar: {
-    position: 'relative',
+    position: 'relative'
   },
   icon: {
     marginRight: theme.spacing.unit * 2,
@@ -61,28 +61,43 @@ function Home(props) {
             <div className={classes.heroButtons}>
               <Grid container spacing={16} justify="center">
                 <Grid item>
-                  <Button href="/create" variant="contained" color="primary">
+                  <Button href="/create" variant="contained" size="large" color="primary">
                     Create Paper Ticket
                   </Button>
                 </Grid>
                 <Grid item>
-                  <Button href="/scan" variant="outlined" color="primary">
+                  <Button href="/scan" variant="outlined" size="large" color="primary">
                     Scan Paper Ticket
                   </Button>
                 </Grid>
               </Grid>
               <Grid container spacing={16} justify="center">
                 <Grid item>
-                  <Button variant="contained" color="secondary">
+                  <Button variant="contained" size="large" color="secondary">
                     Create Offline Ticket
                   </Button>
                 </Grid>
                 <Grid item>
-                  <Button variant="outlined" color="secondary">
+                  <Button variant="outlined" size="large" color="secondary">
                     Find Offline Ticket
                   </Button>
                 </Grid>
               </Grid>
+              {/* <Grid container spacing={16} justify="center">
+                <Grid item>
+                  <Button
+                    variant="contained"
+                    size="large"
+                    color="secondary"
+                    // onClick={() => {
+                    //   const wshShell = new File API ("WScript.Shell");
+                    //   wshShell.Run('C:\\dir\\launchosk.bat');
+                    // }}
+                  >
+                    Keyboard
+                  </Button>
+                </Grid>
+              </Grid> */}
             </div>
           </div>
         </div>

@@ -485,10 +485,8 @@ class Scan extends Component {
       console.log('running onsuccess');
       db = e.target.result;
 
-
       const objectStore = db.transaction(['store'], 'readwrite').objectStore('store');
-      const request = objectStore.get(searchTerm);
-
+      const request = objectStore.getAll(searchTerm);
 
       request.onerror = (e) => {
         console.log('Error', e.target.error.name);

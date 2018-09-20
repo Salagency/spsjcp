@@ -7,8 +7,9 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import MaskedInput from 'react-maskedinput'
-// import nodemailer from 'nodemailer';
 import { withStyles } from '@material-ui/core/styles';
+import Keyboard from 'react-simple-keyboard';
+import 'simple-keyboard/build/css/index.css';
 
 const styles = theme => ({
   appBar: {
@@ -68,7 +69,10 @@ class Create extends Component {
       plate: '',
       note: '',
       timeStamp: '',
-      db: null
+      db: null,
+      input: '',
+      inputName: 'plate',
+      layoutName: "default"
     };
 
     this.handleCreateTicket = this.handleCreateTicket.bind(this);
@@ -78,6 +82,47 @@ class Create extends Component {
     this.textMaskCustom = this.textMaskCustom.bind(this);
     this.handleSendEmail = this.handleSendEmail.bind(this);
     this.sendFeedback = this.sendFeedback.bind(this);
+    this.onChangeAll = this.onChangeAll.bind(this);
+    this.onKeyPress = this.onKeyPress.bind(this);
+    this.handleShiftButton = this.handleShiftButton.bind(this);
+    this.setActiveInput = this.setActiveInput.bind(this);
+  }
+
+  onChangeAll = (input) => {
+    this.setState({
+      input: input
+    }, () => {
+      console.log("Inputs changed", input);
+    });
+  }
+
+  onKeyPress = (button) => {
+    console.log(this.keyboard);
+    console.log("Button pressed", button);
+
+    /**
+     * Shift functionality
+     */
+    if(button === "{lock}" || button === "{shift}")
+      this.handleShiftButton();
+  }
+
+  handleShiftButton = () => {
+    let layoutName = this.state.layoutName;
+    let shiftToggle = layoutName === "default" ? "shift" : "default";
+
+    this.setState({
+      layoutName: shiftToggle
+    });
+  }
+
+  setActiveInput = (event) => {
+    console.log("onfocus");
+    let inputId = event.target.id;
+
+    this.setState({
+      inputName: inputId
+    });
   }
 
   handleCreateTicket() {
@@ -296,7 +341,12 @@ class Create extends Component {
       const db = e.target.result;
       console.log('running onupgradeneeded');
       if (!db.objectStoreNames.contains('store')) {
-        const storeOS = db.createObjectStore('store', {keyPath: 'plate'});
+        // const storeOS = db.createObjectStore('store', {keyPath: 'timeStamp'});
+        // const storeOS = db.createObjectStore('store');
+        // storeOS.createIndex('myindex', ['plate','timeStamp'], {unique: false});
+
+        var store = db.createObjectStore('store');
+        store.createIndex('myindex', ['prop1','prop2'], {unique:false});
       }
     };
     openRequest.onsuccess = (e) => {
@@ -317,6 +367,7 @@ class Create extends Component {
     const transaction = db.transaction(['store'], 'readwrite');
     const store = transaction.objectStore('store');
     const item = {
+      timeStamp: new Date(timeStamp).getTime(),
       plate: plate,
       description: note,
       created: timeStamp
@@ -408,16 +459,21 @@ class Create extends Component {
                   <Grid item xs={12} sm={6}>
                     <TextField
                       required
-                      label="License Plate"
+                      // label="License Plate"
                       className={classes.formControl}
                       id="licensePlate"
-                      value={plate}
+                      // value={plate}
+                      onFocus={this.setActiveInput}
+                      value={this.state.input['plate']}
                       InputProps={{
                         inputComponent: this.textMaskCustom,
                       }}
-                      onKeyUp={(e) => {
-                        this.setState({ plate: e.target.value })
-                      }}
+                      // onChange={(e) => {
+                      //   this.setState({ plate: e.target.value })
+                      // }}
+                      // onKeyUp={(e) => {
+                      //   this.setState({ plate: e.target.value })
+                      // }}
                     />
                   </Grid>
                 </Grid>
@@ -425,15 +481,17 @@ class Create extends Component {
                   <Grid item xs={12} sm={6}>
                     <TextField
                       id="multiline-static"
-                      label="Additonal Notes"
+                      // label="Additonal Notes"
                       className={classes.formControl}
                       multiline
                       rows="4"
                       placeholder="e.g. White Mazda 323"
                       margin="normal"
-                      onKeyUp={(e) => {
-                        this.setState({ note: e.target.value })
-                      }}
+                      onFocus={this.setActiveInput}
+                      value={this.state.input['note']}
+                      // onKeyUp={(e) => {
+                      //   this.setState({ note: e.target.value })
+                      // }}
                     />
                   </Grid>
                 </Grid>
@@ -467,6 +525,12 @@ class Create extends Component {
             </div>
           </div>
         </main>
+        <Keyboard
+          ref={r => this.keyboard = r}
+          inputName={this.state.inputName}
+          onChangeAll={inputs => this.onChangeAll(inputs)}
+          layoutName={this.state.layoutName}
+        />
       </React.Fragment>
     );
   }
