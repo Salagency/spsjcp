@@ -90,6 +90,7 @@ class Scan extends Component {
       layoutName: 'default',
       ticketTime: '',
       scannedTime: '',
+      timeStamp: '',
       hoursParked: 0,
       totalDays: 0,
       remaindingHours: 0,
@@ -489,7 +490,9 @@ class Scan extends Component {
   }
 
   setTimes(plate, ticketTime) {
+    console.log(ticketTime);
     this.setState({
+      timeStamp: new Date(ticketTime),
       plate,
       ticketTime,
       scannedTime: new Date()
@@ -565,6 +568,7 @@ class Scan extends Component {
             if (!cursor.value.paid) {
               this.setState({
                 searchResult: cursor.value,
+                timeStamp: cursor.value.timeStamp,
                 plate: cursor.value.plate }, () => {
                  this.setTimes(cursor.value.plate, new Date(cursor.value.created));
                });
@@ -615,41 +619,83 @@ class Scan extends Component {
 
   updatePaymentRecord() {
     let db;
-    const { plate, totalDue, scannedTime } = this.state;
-    const openRequest = indexedDB.open('CarparkDB', 1);
-    openRequest.onsuccess = (e) => {
-      console.log('running onsuccess');
+    const { timeStamp, plate, totalDue, scannedTime } = this.state;
+    const openDBRequest = indexedDB.open('CarparkDB', 1);
+    openDBRequest.onsuccess = (e) => {
       db = e.target.result;
-      const objectStore = db.transaction(['store'], 'readwrite').objectStore('store');
-      const request = objectStore.get(plate);
+      const transaction = db.transaction(['store'], 'readwrite');
+      const objectStore = transaction.objectStore('store');
+      const openRequest = objectStore.openCursor();
+      openRequest.onsuccess = (e) => {
+        const cursor = e.target.result;
+        if (cursor) {
+          console.log(timeStamp);
+          console.log(cursor.value.timeStamp);
 
-      request.onerror = (e) => {
-        console.log('Error', e.target.error.name);
-      };
+          console.log(timeStamp.toString() === cursor.value.timeStamp.toString());
+          // console.log(cursor.value.plate);
+          if (cursor.value.timeStamp.toString() === timeStamp.toString()) {
+            console.log("Found IT: " + JSON.stringify(cursor.value));
+            console.log(cursor.value);
+            cursor.value.totalDue = totalDue;
+            cursor.value.paid = totalDue;
+            cursor.value.scannedTime = scannedTime;
 
-      request.onsuccess = (e) => {
-        const data = e.target.result;
-
-        if (data) {
-          console.log(data);
-          data.totalDue = totalDue;
-          data.paid = totalDue;
-          data.scannedTime = scannedTime;
-
-          // Put this updated object back into the database.
-          const requestUpdate = objectStore.put(data);
-           requestUpdate.onerror = (e) => {
-             console.log('Error', e.target.error.name);
-           };
-           requestUpdate.onsuccess = (e) => {
-             console.log('record updated');
-             this.handlePrintReceipt();
-           };
-        } else {
-          console.log('No Data Found');
+            // Put this updated object back into the database.
+            const requestUpdate = objectStore.put(cursor.value);
+             requestUpdate.onerror = (e) => {
+               console.log('Error', e.target.error.name);
+             };
+             requestUpdate.onsuccess = (e) => {
+               console.log('record updated');
+               this.handlePrintReceipt();
+             };
+          }
+          cursor.continue();
         }
-      };
-    };
+      }
+    }
+
+
+    // let db;
+    // const { timeStamp, plate, totalDue, scannedTime } = this.state;
+    // const openRequest = indexedDB.open('CarparkDB', 1);
+    // openRequest.onsuccess = (e) => {
+    //   console.log('running onsuccess');
+    //   db = e.target.result;
+    //   const objectStore = db.transaction(['store'], 'readwrite').objectStore('store');
+    //   console.log(timeStamp);
+    //   console.log(new Date(timeStamp));
+    //   const request = objectStore.get(new Date(timeStamp));
+    //
+    //
+    //   request.onerror = (e) => {
+    //     console.log('Error', e.target.error.name);
+    //   };
+    //
+    //   request.onsuccess = (e) => {
+    //     const data = e.target.result;
+    //     console.log(e.target);
+    //     if (data) {
+    //       console.log(data);
+    //       data.totalDue = totalDue;
+    //       data.paid = totalDue;
+    //       data.scannedTime = scannedTime;
+    //
+    //       // Put this updated object back into the database.
+    //       const requestUpdate = objectStore.put(data);
+    //        requestUpdate.onerror = (e) => {
+    //          console.log('Error', e.target.error.name);
+    //        };
+    //        requestUpdate.onsuccess = (e) => {
+    //          console.log('record updated');
+    //          this.handlePrintReceipt();
+    //        };
+    //     } else {
+    //       console.log('No Data Found');
+    //     }
+    //   };
+    // };
   }
 
   render() {

@@ -322,6 +322,7 @@ class Create extends Component {
     label.setObjectText('TEXT_1', plate.toUpperCase());
     label.print('DYMO LabelWriter Wireless on DYMOLWW113A9A');
     // this.handleSendEmail();
+    console.log(timeStamp);
     this.setState({ timeStamp }, () =>{
       this.handleSaveData();
     })
@@ -332,6 +333,8 @@ class Create extends Component {
       console.log('This browser doesn\'t support IndexedDB');
       return;
     }
+
+    console.log(this.state.timeStamp);
 
     let db;
     const openRequest = indexedDB.open('CarparkDB', 1);
@@ -363,7 +366,8 @@ class Create extends Component {
     const transaction = db.transaction(['store'], 'readwrite');
     const store = transaction.objectStore('store');
     const item = {
-      timeStamp: new Date(timeStamp).getTime(),
+      // timeStamp: new Date(timeStamp).getTime(),
+      timeStamp: new Date(timeStamp),
       plate: plate,
       description: note,
       created: timeStamp
