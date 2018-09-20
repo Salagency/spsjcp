@@ -94,7 +94,9 @@ class Scan extends Component {
       hoursParked: 0,
       totalDays: 0,
       remaindingHours: 0,
-      totalDue: 0
+      totalDue: 0,
+      ticketPaid: false,
+      searchFeedback: ''
     };
 
     this.initCamera = this.initCamera.bind(this);
@@ -455,6 +457,9 @@ class Scan extends Component {
     label.setObjectText('TEXT_DATE', `In: ${moment(ticketTime).format('DD-MMM-YYYY')} ${moment(ticketTime).format('h:mm A')}`);
     label.setObjectText('TEXT_2', `Paid: $${totalDue}`);
     label.print('DYMO LabelWriter Wireless on DYMOLWW113A9A');
+    this.setState({ ticketPaid: false }, () => {
+
+    });
   }
 
   initCamera() {
@@ -473,6 +478,7 @@ class Scan extends Component {
         // 'PLATE NUMBER,Date and time (see line below)'
         // 'PBM 3394,Tue Sep 04 2018 00:10:30 GMT-0400 (Eastern Daylight Time)';
         // let ticketTime = 'PBM 3394,Tue Sep 04 2018 00:10:30 GMT-0400 (Eastern Daylight Time)';
+        window.scrollTo(0,document.body.scrollHeight);
         ticketTime = ticketTime.split(',');
         this.setTimes(ticketTime[0], new Date(ticketTime[1]));
       });
@@ -527,31 +533,6 @@ class Scan extends Component {
   searchPlates() {
     let db;
     const { searchTerm } = this.state;
-    // const openRequest = indexedDB.open('CarparkDB', 1);
-    // openRequest.onsuccess = (e) => {
-    //   console.log('running onsuccess');
-    //   db = e.target.result;
-    //
-    //   const objectStore = db.transaction(['store'], 'readwrite').objectStore('store');
-    //   const request = objectStore.getAll(searchTerm);
-    //
-    //   request.onerror = (e) => {
-    //     console.log('Error', e.target.error.name);
-    //   };
-    //
-    //   request.onsuccess = (e) => {
-    //     const data = e.target.result;
-    //
-    //     if (data) {
-    //       console.log(data);
-    //       this.setState({ plate: data.plate }, () => {
-    //         this.setTimes(data.plate, new Date(data.created));
-    //       });
-    //     } else {
-    //       console.log('No Data Found');
-    //     }
-    //   };
-    // };
     const openDBRequest = indexedDB.open('CarparkDB', 1);
     openDBRequest.onsuccess = (e) => {
       db = e.target.result;
@@ -573,7 +554,10 @@ class Scan extends Component {
                  this.setTimes(cursor.value.plate, new Date(cursor.value.created));
                });
             } else {
-              this.setState({ searchFeedback: 'No unpaid results found'});
+              this.setState({
+                ticketPaid: true,
+                searchFeedback: 'No unpaid results found'
+              });
             }
           }
           cursor.continue();
@@ -610,6 +594,37 @@ class Scan extends Component {
       totalDue = hoursParked * 6 > 35 ? 35 : hoursParked * 6;
     }
 
+    let db;
+    const { timeStamp } = this.state;
+    const openDBRequest = indexedDB.open('CarparkDB', 1);
+    openDBRequest.onsuccess = (e) => {
+      db = e.target.result;
+      const transaction = db.transaction(['store'], 'readwrite');
+      const objectStore = transaction.objectStore('store');
+      const openRequest = objectStore.openCursor();
+      openRequest.onsuccess = (e) => {
+        const cursor = e.target.result;
+        if (cursor) {
+          console.log(timeStamp);
+          console.log(cursor.value.timeStamp);
+
+          console.log(timeStamp.toString() === cursor.value.timeStamp.toString());
+          // console.log(cursor.value.plate);
+
+          if (cursor.value.timeStamp.toString() === timeStamp.toString()) {
+            console.log("Found IT: " + JSON.stringify(cursor.value));
+            if (cursor.value.paid) {
+              this.setState({
+                ticketPaid: true,
+                searchFeedback: 'No unpaid results found'
+              });
+            }
+          }
+          cursor.continue();
+        }
+      }
+    }
+
     this.setState({
       totalDays,
       remaindingHours,
@@ -637,70 +652,44 @@ class Scan extends Component {
           if (cursor.value.timeStamp.toString() === timeStamp.toString()) {
             console.log("Found IT: " + JSON.stringify(cursor.value));
             console.log(cursor.value);
-            cursor.value.totalDue = totalDue;
-            cursor.value.paid = totalDue;
-            cursor.value.scannedTime = scannedTime;
 
-            // Put this updated object back into the database.
-            const requestUpdate = objectStore.put(cursor.value);
-             requestUpdate.onerror = (e) => {
-               console.log('Error', e.target.error.name);
-             };
-             requestUpdate.onsuccess = (e) => {
-               console.log('record updated');
-               this.handlePrintReceipt();
-             };
+            if (!cursor.value.paid) {
+              cursor.value.totalDue = totalDue;
+              cursor.value.scannedTime = scannedTime;
+              cursor.value.paid = true;
+              // Put this updated object back into the database.
+              const requestUpdate = objectStore.put(cursor.value);
+               requestUpdate.onerror = (e) => {
+                 console.log('Error', e.target.error.name);
+               };
+               requestUpdate.onsuccess = (e) => {
+                 console.log('record updated');
+                 this.handlePrintReceipt();
+               };
+            } else {
+              this.setState({ ticketPaid: true });
+            }
           }
           cursor.continue();
         }
       }
     }
-
-
-    // let db;
-    // const { timeStamp, plate, totalDue, scannedTime } = this.state;
-    // const openRequest = indexedDB.open('CarparkDB', 1);
-    // openRequest.onsuccess = (e) => {
-    //   console.log('running onsuccess');
-    //   db = e.target.result;
-    //   const objectStore = db.transaction(['store'], 'readwrite').objectStore('store');
-    //   console.log(timeStamp);
-    //   console.log(new Date(timeStamp));
-    //   const request = objectStore.get(new Date(timeStamp));
-    //
-    //
-    //   request.onerror = (e) => {
-    //     console.log('Error', e.target.error.name);
-    //   };
-    //
-    //   request.onsuccess = (e) => {
-    //     const data = e.target.result;
-    //     console.log(e.target);
-    //     if (data) {
-    //       console.log(data);
-    //       data.totalDue = totalDue;
-    //       data.paid = totalDue;
-    //       data.scannedTime = scannedTime;
-    //
-    //       // Put this updated object back into the database.
-    //       const requestUpdate = objectStore.put(data);
-    //        requestUpdate.onerror = (e) => {
-    //          console.log('Error', e.target.error.name);
-    //        };
-    //        requestUpdate.onsuccess = (e) => {
-    //          console.log('record updated');
-    //          this.handlePrintReceipt();
-    //        };
-    //     } else {
-    //       console.log('No Data Found');
-    //     }
-    //   };
-    // };
   }
 
   render() {
     const { classes } = this.props;
-    const { searchTerm, plate, ticketTime, scannedTime, hoursParked, totalDays, remaindingHours, totalDue } = this.state;
+    const {
+      searchTerm,
+      plate,
+      ticketTime,
+      scannedTime,
+      hoursParked,
+      totalDays,
+      remaindingHours,
+      totalDue,
+      ticketPaid,
+      searchFeedback
+    } = this.state;
 
     return (
       <React.Fragment>
@@ -747,20 +736,22 @@ class Scan extends Component {
                     </p>
                   </Grid>
                 </Grid>
-                <Grid container spacing={16} justify="center">
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={() => {
-                      this.searchPlates();
-                    }}
-                  >
-                    Search
-                  </Button>
-                </Grid>
+                {searchTerm.length > 0 ?
+                  <Grid container spacing={16} justify="center">
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      onClick={() => {
+                        this.searchPlates();
+                      }}
+                    >
+                      Search
+                    </Button>
+                  </Grid>
+                : null}
                 <Grid container spacing={16} justify="center">
                   <Paper className={classes.root}>
-                    {hoursParked ?
+                    {hoursParked && !ticketPaid ?
                       <Table className={classes.table}>
                         <TableHead>
                           <TableRow>
@@ -816,7 +807,7 @@ class Scan extends Component {
                   </Paper>
                 </Grid>
                 <br />
-                {hoursParked ?
+                {hoursParked && !ticketPaid ?
                   <Grid container spacing={16} justify="center">
                     <Grid item>
                       <Button
@@ -826,6 +817,13 @@ class Scan extends Component {
                       >
                         Print Receipt
                       </Button>
+                    </Grid>
+                  </Grid>
+                : null}
+                {ticketPaid ?
+                  <Grid container spacing={16} justify="center">
+                    <Grid item>
+                      <p>{searchFeedback}</p>
                     </Grid>
                   </Grid>
                 : null}

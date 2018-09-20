@@ -71,7 +71,7 @@ function Home(props) {
                   </Button>
                 </Grid>
               </Grid>
-              <Grid container spacing={16} justify="center">
+              {/* <Grid container spacing={16} justify="center">
                 <Grid item>
                   <Button variant="contained" size="large" color="secondary">
                     Create Offline Ticket
@@ -80,21 +80,6 @@ function Home(props) {
                 <Grid item>
                   <Button variant="outlined" size="large" color="secondary">
                     Find Offline Ticket
-                  </Button>
-                </Grid>
-              </Grid>
-              {/* <Grid container spacing={16} justify="center">
-                <Grid item>
-                  <Button
-                    variant="contained"
-                    size="large"
-                    color="secondary"
-                    // onClick={() => {
-                    //   const wshShell = new File API ("WScript.Shell");
-                    //   wshShell.Run('C:\\dir\\launchosk.bat');
-                    // }}
-                  >
-                    Keyboard
                   </Button>
                 </Grid>
               </Grid> */}
