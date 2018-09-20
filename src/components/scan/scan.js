@@ -15,6 +15,8 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import TextField from '@material-ui/core/TextField';
 import MaskedInput from 'react-maskedinput'
+import Keyboard from 'react-simple-keyboard';
+import 'simple-keyboard/build/css/index.css';
 
 import { withStyles } from '@material-ui/core/styles';
 
@@ -83,6 +85,9 @@ class Scan extends Component {
     this.state = {
       searchTerm: '',
       plate: '',
+      input: '',
+      inputName: 'searchTerm',
+      layoutName: 'default',
       ticketTime: '',
       scannedTime: '',
       hoursParked: 0,
@@ -99,10 +104,50 @@ class Scan extends Component {
     this.searchPlates = this.searchPlates.bind(this);
     this.updatePaymentRecord = this.updatePaymentRecord.bind(this);
     this.calculateFare = this.calculateFare.bind(this);
+    this.onChangeAll = this.onChangeAll.bind(this);
+    this.onKeyPress = this.onKeyPress.bind(this);
+    this.handleShiftButton = this.handleShiftButton.bind(this);
+    this.setActiveInput = this.setActiveInput.bind(this);
   }
 
   componentDidMount(props) {
     this.initCamera();
+  }
+
+  onChangeAll = (input) => {
+    this.setState({
+      input: input
+    }, () => {
+      // console.log("Inputs changed", input);
+      this.setState({
+        searchTerm: this.state.input['searchTerm'] ?  this.state.input['searchTerm'].toUpperCase() : ''
+      });
+    });
+  }
+
+  onKeyPress = (button) => {
+    // console.log(this.keyboard);
+    // console.log("Button pressed", button);
+    if(button === "{lock}" || button === "{shift}")
+      this.handleShiftButton();
+  }
+
+  handleShiftButton = () => {
+    let layoutName = this.state.layoutName;
+    let shiftToggle = layoutName === "default" ? "shift" : "default";
+
+    this.setState({
+      layoutName: shiftToggle
+    });
+  }
+
+  setActiveInput = (event) => {
+    // console.log("onfocus");
+    let inputId = event.target.id;
+
+    this.setState({
+      inputName: inputId
+    });
   }
 
   handlePrintReceipt() {
@@ -472,7 +517,6 @@ class Scan extends Component {
         mask="AAA 1111"
         name="expiry"
         placeholder="PBA 1234"
-        onChange={this._onChange}
       />
     );
   }
@@ -480,31 +524,58 @@ class Scan extends Component {
   searchPlates() {
     let db;
     const { searchTerm } = this.state;
-    const openRequest = indexedDB.open('CarparkDB', 1);
-    openRequest.onsuccess = (e) => {
-      console.log('running onsuccess');
+    // const openRequest = indexedDB.open('CarparkDB', 1);
+    // openRequest.onsuccess = (e) => {
+    //   console.log('running onsuccess');
+    //   db = e.target.result;
+    //
+    //   const objectStore = db.transaction(['store'], 'readwrite').objectStore('store');
+    //   const request = objectStore.getAll(searchTerm);
+    //
+    //   request.onerror = (e) => {
+    //     console.log('Error', e.target.error.name);
+    //   };
+    //
+    //   request.onsuccess = (e) => {
+    //     const data = e.target.result;
+    //
+    //     if (data) {
+    //       console.log(data);
+    //       this.setState({ plate: data.plate }, () => {
+    //         this.setTimes(data.plate, new Date(data.created));
+    //       });
+    //     } else {
+    //       console.log('No Data Found');
+    //     }
+    //   };
+    // };
+    const openDBRequest = indexedDB.open('CarparkDB', 1);
+    openDBRequest.onsuccess = (e) => {
       db = e.target.result;
-
-      const objectStore = db.transaction(['store'], 'readwrite').objectStore('store');
-      const request = objectStore.getAll(searchTerm);
-
-      request.onerror = (e) => {
-        console.log('Error', e.target.error.name);
-      };
-
-      request.onsuccess = (e) => {
-        const data = e.target.result;
-
-        if (data) {
-          console.log(data);
-          this.setState({ plate: data.plate }, () => {
-            this.setTimes(data.plate, new Date(data.created));
-          });
-        } else {
-          console.log('No Data Found');
+      const transaction = db.transaction(['store'], 'readwrite');
+      const objectStore = transaction.objectStore('store');
+      const openRequest = objectStore.openCursor();
+      openRequest.onsuccess = (e) => {
+        const cursor = e.target.result;
+        if (cursor) {
+          // console.log(searchTerm);
+          // console.log(cursor.value.plate);
+          if (cursor.value.plate.indexOf(searchTerm) !== -1) {
+            console.log("We found a row with value: " + JSON.stringify(cursor.value));
+            if (!cursor.value.paid) {
+              this.setState({
+                searchResult: cursor.value,
+                plate: cursor.value.plate }, () => {
+                 this.setTimes(cursor.value.plate, new Date(cursor.value.created));
+               });
+            } else {
+              this.setState({ searchFeedback: 'No unpaid results found'});
+            }
+          }
+          cursor.continue();
         }
-      };
-    };
+      }
+    }
   }
 
   calculateFare() {
@@ -611,17 +682,23 @@ class Scan extends Component {
                 <Grid container spacing={16} justify="center">
                   <Grid item xs={12} sm={4}>
                     <TextField
-                      label="Look up by License"
+                      required
+                      label="License Plate"
                       className={classes.formControl}
-                      id="licensePlate"
+                      id="searchTerm"
                       value={searchTerm}
+                      onFocus={this.setActiveInput}
                       InputProps={{
                         inputComponent: this.textMaskCustom,
                       }}
-                      onKeyUp={(e) => {
-                        this.setState({ searchTerm: e.target.value })
-                      }}
                     />
+                  </Grid>
+                </Grid>
+                <Grid container spacing={16} justify="center">
+                  <Grid item>
+                    <p>
+                      <i>**If doing a manual search. Please enter a full license plate number for an accurate result**</i>
+                    </p>
                   </Grid>
                 </Grid>
                 <Grid container spacing={16} justify="center">
@@ -632,7 +709,7 @@ class Scan extends Component {
                       this.searchPlates();
                     }}
                   >
-                    Find
+                    Search
                   </Button>
                 </Grid>
                 <Grid container spacing={16} justify="center">
@@ -728,6 +805,12 @@ class Scan extends Component {
             </div>
           </div>
         </main>
+        <Keyboard
+          ref={r => this.keyboard = r}
+          inputName={this.state.inputName}
+          onChangeAll={inputs => this.onChangeAll(inputs)}
+          layoutName={this.state.layoutName}
+        />
       </React.Fragment>
     );
   }

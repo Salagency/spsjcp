@@ -72,11 +72,10 @@ class Create extends Component {
       db: null,
       input: '',
       inputName: 'plate',
-      layoutName: "default"
+      layoutName: 'default'
     };
 
     this.handleCreateTicket = this.handleCreateTicket.bind(this);
-    this.handleChange = this.handleChange.bind(this);
     this.handleSaveData = this.handleSaveData.bind(this);
     this.addItem = this.addItem.bind(this);
     this.textMaskCustom = this.textMaskCustom.bind(this);
@@ -92,17 +91,17 @@ class Create extends Component {
     this.setState({
       input: input
     }, () => {
-      console.log("Inputs changed", input);
+      // console.log("Inputs changed", input);
+      this.setState({
+        plate: this.state.input['plate'] ?  this.state.input['plate'].toUpperCase() : '',
+        note: this.state.input['note'] ? this.state.input['note'].toUpperCase() : ''
+      });
     });
   }
 
   onKeyPress = (button) => {
-    console.log(this.keyboard);
-    console.log("Button pressed", button);
-
-    /**
-     * Shift functionality
-     */
+    // console.log(this.keyboard);
+    // console.log("Button pressed", button);
     if(button === "{lock}" || button === "{shift}")
       this.handleShiftButton();
   }
@@ -117,7 +116,7 @@ class Create extends Component {
   }
 
   setActiveInput = (event) => {
-    console.log("onfocus");
+    // console.log("onfocus");
     let inputId = event.target.id;
 
     this.setState({
@@ -321,7 +320,7 @@ class Create extends Component {
     const label = window.dymo.label.framework.openLabelXml(labelXml);
     label.setObjectText('BARCODE', barcodeData.toUpperCase());
     label.setObjectText('TEXT_1', plate.toUpperCase());
-    // label.print('DYMO LabelWriter Wireless on DYMOLWW113A9A');
+    label.print('DYMO LabelWriter Wireless on DYMOLWW113A9A');
     // this.handleSendEmail();
     this.setState({ timeStamp }, () =>{
       this.handleSaveData();
@@ -341,12 +340,9 @@ class Create extends Component {
       const db = e.target.result;
       console.log('running onupgradeneeded');
       if (!db.objectStoreNames.contains('store')) {
-        // const storeOS = db.createObjectStore('store', {keyPath: 'timeStamp'});
+        const storeOS = db.createObjectStore('store', {keyPath: 'timeStamp'});
         // const storeOS = db.createObjectStore('store');
         // storeOS.createIndex('myindex', ['plate','timeStamp'], {unique: false});
-
-        var store = db.createObjectStore('store');
-        store.createIndex('myindex', ['prop1','prop2'], {unique:false});
       }
     };
     openRequest.onsuccess = (e) => {
@@ -383,11 +379,9 @@ class Create extends Component {
     };
   }
 
-  handleChange = name => event => {
-    this.setState({
-      [name]: event.target.value,
-    });
-  };
+  maskedInputChange = (e) => {
+    this.setState({[e.target.name]: e.target.value})
+  }
 
   textMaskCustom(props) {
     const { inputRef, ...other } = props;
@@ -399,7 +393,6 @@ class Create extends Component {
         mask="AAA 1111"
         name="expiry"
         placeholder="PBA 1234"
-        onChange={this._onChange}
       />
     );
   }
@@ -435,7 +428,7 @@ class Create extends Component {
 
   render() {
     const { classes } = this.props;
-    const { plate } = this.state;
+    const { plate, note } = this.state;
 
     return (
       <React.Fragment>
@@ -459,39 +452,29 @@ class Create extends Component {
                   <Grid item xs={12} sm={6}>
                     <TextField
                       required
-                      // label="License Plate"
+                      label="License Plate"
                       className={classes.formControl}
-                      id="licensePlate"
-                      // value={plate}
+                      id="plate"
+                      value={plate}
                       onFocus={this.setActiveInput}
-                      value={this.state.input['plate']}
                       InputProps={{
                         inputComponent: this.textMaskCustom,
                       }}
-                      // onChange={(e) => {
-                      //   this.setState({ plate: e.target.value })
-                      // }}
-                      // onKeyUp={(e) => {
-                      //   this.setState({ plate: e.target.value })
-                      // }}
                     />
                   </Grid>
                 </Grid>
                 <Grid container spacing={16} justify="center">
                   <Grid item xs={12} sm={6}>
                     <TextField
-                      id="multiline-static"
-                      // label="Additonal Notes"
+                      id="note"
+                      label="Additonal Notes"
                       className={classes.formControl}
                       multiline
                       rows="4"
                       placeholder="e.g. White Mazda 323"
                       margin="normal"
                       onFocus={this.setActiveInput}
-                      value={this.state.input['note']}
-                      // onKeyUp={(e) => {
-                      //   this.setState({ note: e.target.value })
-                      // }}
+                      value={note}
                     />
                   </Grid>
                 </Grid>
