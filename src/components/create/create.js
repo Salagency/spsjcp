@@ -8,6 +8,11 @@ import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import MaskedInput from 'react-maskedinput'
 import { withStyles } from '@material-ui/core/styles';
+// import Snackbar from '@material-ui/core/Snackbar';
+// import SnackbarContent from '@material-ui/core/SnackbarContent';
+// import Fade from '@material-ui/core/Fade';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Keyboard from 'react-simple-keyboard';
 import 'simple-keyboard/build/css/index.css';
 
@@ -72,7 +77,9 @@ class Create extends Component {
       db: null,
       input: '',
       inputName: 'plate',
-      layoutName: 'default'
+      layoutName: 'default',
+      notificationOpen: false,
+      notificationMessage: ''
     };
 
     this.handleCreateTicket = this.handleCreateTicket.bind(this);
@@ -85,6 +92,7 @@ class Create extends Component {
     this.onKeyPress = this.onKeyPress.bind(this);
     this.handleShiftButton = this.handleShiftButton.bind(this);
     this.setActiveInput = this.setActiveInput.bind(this);
+    this.notify = this.notify.bind(this);
   }
 
   onChangeAll = (input) => {
@@ -320,12 +328,18 @@ class Create extends Component {
     const label = window.dymo.label.framework.openLabelXml(labelXml);
     label.setObjectText('BARCODE', barcodeData.toUpperCase());
     label.setObjectText('TEXT_1', plate.toUpperCase());
-    label.print('DYMO LabelWriter Wireless on DYMOLWW113A9A');
+    // label.print('DYMO LabelWriter Wireless on DYMOLWW113A9A');
+    label.print('DYMO LabelWriter 400');
     // this.handleSendEmail();
-    console.log(timeStamp);
+    this.notify('Printing Ticket', 'success');
+    // console.log(timeStamp);
     this.setState({ timeStamp }, () =>{
       this.handleSaveData();
     })
+  }
+
+  notify(msg, type) {
+    toast[type](msg);
   }
 
   handleSaveData() {
@@ -432,7 +446,7 @@ class Create extends Component {
 
   render() {
     const { classes } = this.props;
-    const { plate, note } = this.state;
+    const { plate, note, notificationOpen, notificationMessage } = this.state;
 
     return (
       <React.Fragment>
@@ -512,6 +526,7 @@ class Create extends Component {
             </div>
           </div>
         </main>
+        <ToastContainer />
         <Keyboard
           ref={r => this.keyboard = r}
           inputName={this.state.inputName}

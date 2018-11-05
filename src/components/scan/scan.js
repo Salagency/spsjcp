@@ -15,6 +15,8 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import TextField from '@material-ui/core/TextField';
 import MaskedInput from 'react-maskedinput'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Keyboard from 'react-simple-keyboard';
 import 'simple-keyboard/build/css/index.css';
 
@@ -111,6 +113,7 @@ class Scan extends Component {
     this.onKeyPress = this.onKeyPress.bind(this);
     this.handleShiftButton = this.handleShiftButton.bind(this);
     this.setActiveInput = this.setActiveInput.bind(this);
+    this.notify = this.notify.bind(this);
   }
 
   componentDidMount(props) {
@@ -456,10 +459,15 @@ class Scan extends Component {
     label.setObjectText('TEXT_4', plate.toUpperCase());
     label.setObjectText('TEXT_DATE', `In: ${moment(ticketTime).format('DD-MMM-YYYY')} ${moment(ticketTime).format('h:mm A')}`);
     label.setObjectText('TEXT_2', `Paid: $${totalDue}`);
-    label.print('DYMO LabelWriter Wireless on DYMOLWW113A9A');
+    // label.print('DYMO LabelWriter Wireless on DYMOLWW113A9A');
+    label.print('DYMO LabelWriter 400');
     this.setState({ ticketPaid: false }, () => {
 
     });
+  }
+
+  notify(msg, type) {
+    toast[type](msg);
   }
 
   initCamera() {
@@ -489,6 +497,7 @@ class Scan extends Component {
           else scanner.start(cameras[0]);
         } else {
           console.error('No cameras found.');
+          this.notify('No Camera Found', 'error');
         }
       }).catch(function (e) {
         console.error(e);
@@ -541,6 +550,7 @@ class Scan extends Component {
       const openRequest = objectStore.openCursor();
       openRequest.onsuccess = (e) => {
         const cursor = e.target.result;
+        console.log(cursor);
         if (cursor) {
           // console.log(searchTerm);
           // console.log(cursor.value.plate);
@@ -557,6 +567,8 @@ class Scan extends Component {
               this.setState({
                 ticketPaid: true,
                 searchFeedback: 'No unpaid results found'
+              }, () => {
+                this.notify(`No unpaid tickets found!`, 'error');
               });
             }
           }
@@ -568,8 +580,12 @@ class Scan extends Component {
 
   calculateFare() {
     const { ticketTime, scannedTime, hoursParked } = this.state;
+    const creationDate = new Date(ticketTime);
+    const scannednDate = new Date(scannedTime);
     const ticketCreationDate = new Date(ticketTime).getDate();
+    const ticketCreationMonth = new Date(ticketTime).getMonth();
     const ticketScannedDate = new Date(scannedTime).getDate();
+    const ticketScannedMonth = new Date(scannedTime).getMonth();
     let totalDays = 0;
     let remaindingHours = 0;
     let totalDue = 0;
@@ -579,20 +595,33 @@ class Scan extends Component {
       totalDue = hoursParked * 6;
     } else if (hoursParked === 6) {
       totalDue = 35;
-    } else if (hoursParked > 6 && ticketCreationDate < ticketScannedDate) {
+    } else if (hoursParked > 6 && ticketCreationMonth <= ticketScannedMonth) {
       const timeSpentToday = moment().startOf('day').fromNow();
-      totalDays = ticketScannedDate - ticketCreationDate;
+      const diff = new moment.duration(scannednDate - creationDate);
+      totalDays = Math.floor(diff.asDays());
 
       if (timeSpentToday.indexOf('minutes') > -1) {
         totalDue = 6 + (totalDays * 35);
+        console.log(totalDue);
       } else {
         remaindingHours = (moment().startOf('day').fromNow()).replace('hour ago', '').replace('hours ago', '').replace('minutes ago', '');
         remaindingHours = remaindingHours - 7;
         totalDue = remaindingHours * 6 > 35 ? 35 + (totalDays * 35) : remaindingHours * 6 + (totalDays * 35);
+
+        console.log(totalDue);
       }
     } else if (hoursParked > 6 && ticketCreationDate === ticketScannedDate) {
       totalDue = hoursParked * 6 > 35 ? 35 : hoursParked * 6;
     }
+
+    // console.log(hoursParked > 6);
+    // console.log(ticketCreationMonth);
+    // console.log(ticketScannedMonth);
+    // console.log(ticketCreationDate);
+    // console.log(ticketScannedDate);
+    // console.log(ticketCreationDate < ticketScannedDate);
+    // console.log(hoursParked);
+    // console.log(totalDue);
 
     let db;
     const { timeStamp } = this.state;
@@ -603,12 +632,12 @@ class Scan extends Component {
       const objectStore = transaction.objectStore('store');
       const openRequest = objectStore.openCursor();
       openRequest.onsuccess = (e) => {
+        // console.log('asdf');
         const cursor = e.target.result;
         if (cursor) {
-          console.log(timeStamp);
-          console.log(cursor.value.timeStamp);
-
-          console.log(timeStamp.toString() === cursor.value.timeStamp.toString());
+          // console.log(timeStamp);
+          // console.log(cursor.value.timeStamp);
+          // console.log(timeStamp.toString() === cursor.value.timeStamp.toString());
           // console.log(cursor.value.plate);
 
           if (cursor.value.timeStamp.toString() === timeStamp.toString()) {
@@ -617,13 +646,27 @@ class Scan extends Component {
               this.setState({
                 ticketPaid: true,
                 searchFeedback: 'No unpaid results found'
+              }, () => {
+                this.notify(`No unpaid tickets found!`, 'error');
               });
             }
           }
           cursor.continue();
+        } else {
+          // this.notify(`No results found`, 'error');
         }
       }
+
+      openRequest.onerror = (e) => {
+        this.notify(`No results found`, 'error');
+        console.dir(e);
+      };
     }
+
+    openDBRequest.onerror = (e) => {
+      this.notify(`Database Connection Error`, 'error');
+      console.dir(e);
+    };
 
     this.setState({
       totalDays,
@@ -849,6 +892,7 @@ class Scan extends Component {
             </div>
           </div>
         </main>
+        <ToastContainer />
         <Keyboard
           ref={r => this.keyboard = r}
           inputName={this.state.inputName}
