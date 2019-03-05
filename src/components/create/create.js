@@ -303,8 +303,8 @@ class Create extends Component {
     const label = window.dymo.label.framework.openLabelXml(labelXml);
     // label.setObjectText('BARCODE', barcodeData.toUpperCase());
     label.setObjectText('TEXT_1', plate.toUpperCase());
-    // label.print('DYMO LabelWriter Wireless on DYMOLWW113A9A');
-    label.print('DYMO LabelWriter 400');
+    label.print('DYMO LabelWriter Wireless');
+    // label.print('DYMO LabelWriter 400');
     // this.handleSendEmail();
     this.notify('Printing Ticket', 'success');
     // console.log(timeStamp);

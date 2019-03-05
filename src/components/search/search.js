@@ -461,8 +461,9 @@ class Search extends Component {
     label.setObjectText('TEXT_4', plate.toUpperCase());
     label.setObjectText('TEXT_DATE', `In: ${moment(ticketTime).format('DD-MMM-YYYY')} ${moment(ticketTime).format('h:mm A')}`);
     label.setObjectText('TEXT_2', `Paid: $${totalDue}`);
+    label.print('DYMO LabelWriter Wireless');
     // label.print('DYMO LabelWriter Wireless on DYMOLWW113A9A');
-    label.print('DYMO LabelWriter 400');
+    // label.print('DYMO LabelWriter 400');
     this.setState({ ticketPaid: false, selectedSearchResult: null, searchResults: [] }, () => {
 
     });
