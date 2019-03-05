@@ -169,7 +169,8 @@ class Create extends Component {
               <Verticalized>False</Verticalized>
               <StyledText>
                 <Element>
-                  <String>St Philip and St James Car Park</String>
+                  <String>St Philip and St James Car Park
+    </String>
                   <Attributes>
                     <Font Family="Calibri" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
                     <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
@@ -184,8 +185,8 @@ class Create extends Component {
                 </Element>
                 <Element>
                   <String>
-                    Mon - Fri 7:00am - 4:00pm
-                    Sat 7:00am - 1:00pm
+    Mon - Fri 7:00am - 4:00pm
+    Sat 7:00am - 1:00pm
                   </String>
                   <Attributes>
                     <Font Family="Calibri" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
