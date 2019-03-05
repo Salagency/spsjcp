@@ -137,7 +137,7 @@ class Create extends Component {
     // const d = new Date();
     // const timeStamp = moment(d).format('h:mma');
     const timeStamp = new Date();
-    const barcodeData = plate + ',' + timeStamp;
+    // const barcodeData = plate + ',' + timeStamp;
     const labelXml = `<?xml version="1.0" encoding="utf-8"?>
     <ContinuousLabel Version="8.0" Units="twips">
       <PaperOrientation>Portrait</PaperOrientation>
@@ -169,24 +169,24 @@ class Create extends Component {
               <Verticalized>False</Verticalized>
               <StyledText>
                 <Element>
-                  <String>St Philip and St James Car Park
-    </String>
+                  <String>St Philip and St James Car Park</String>
                   <Attributes>
                     <Font Family="Calibri" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
                     <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
                   </Attributes>
                 </Element>
                 <Element>
-                  <String>OPENING HOURS
-    </String>
+                  <String>OPENING HOURS</String>
                   <Attributes>
                     <Font Family="Calibri" Size="10" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
                     <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
                   </Attributes>
                 </Element>
                 <Element>
-                  <String>Mon - Fri 7:00am - 4:00pm
-    Sat 7:00am - 1:00pm</String>
+                  <String>
+                    Mon - Fri 7:00am - 4:00pm
+                    Sat 7:00am - 1:00pm
+                  </String>
                   <Attributes>
                     <Font Family="Calibri" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
                     <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
@@ -197,33 +197,6 @@ class Create extends Component {
             <ObjectMargin Left="0" Right="0" Top="0" Bottom="0"/>
             <Length>521.6</Length>
             <LengthMode>Auto</LengthMode>
-            <BorderWidth>0</BorderWidth>
-            <BorderStyle>Solid</BorderStyle>
-            <BorderColor Alpha="255" Red="0" Green="0" Blue="0"/>
-          </Cell>
-          <Cell>
-            <BarcodeObject>
-              <Name>BARCODE</Name>
-              <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
-              <BackColor Alpha="255" Red="255" Green="255" Blue="255"/>
-              <LinkedObjectName></LinkedObjectName>
-              <Rotation>Rotation0</Rotation>
-              <IsMirrored>False</IsMirrored>
-              <IsVariable>False</IsVariable>
-              <Text>PCA 9999</Text>
-              <Type>QRCode</Type>
-              <Size>Large</Size>
-              <TextPosition>None</TextPosition>
-              <TextFont Family="Helvetica" Size="13" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
-              <CheckSumFont Family="Helvetica" Size="10" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
-              <TextEmbedding>None</TextEmbedding>
-              <ECLevel>0</ECLevel>
-              <HorizontalAlignment>Center</HorizontalAlignment>
-              <QuietZonesPadding Left="0" Right="0" Top="0" Bottom="0"/>
-            </BarcodeObject>
-            <ObjectMargin Left="0" Right="0" Top="0" Bottom="0"/>
-            <Length>1205.972</Length>
-            <LengthMode>Fixed</LengthMode>
             <BorderWidth>0</BorderWidth>
             <BorderStyle>Solid</BorderStyle>
             <BorderColor Alpha="255" Red="0" Green="0" Blue="0"/>
@@ -303,9 +276,11 @@ class Create extends Component {
               <Verticalized>False</Verticalized>
               <StyledText>
                 <Element>
-                  <String>Keep this ticket on your person.
-    Do not leave in your vehicle at any time.
-    Not Transferable.</String>
+                  <String>
+                    Keep this ticket on your person.
+                    Do not leave in your vehicle at any time.
+                    Not Transferable.
+                  </String>
                   <Attributes>
                     <Font Family="Calibri" Size="7" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
                     <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
@@ -324,9 +299,9 @@ class Create extends Component {
       </RootCell>
     </ContinuousLabel>`;
 
-    console.log(barcodeData);
+    // console.log(barcodeData);
     const label = window.dymo.label.framework.openLabelXml(labelXml);
-    label.setObjectText('BARCODE', barcodeData.toUpperCase());
+    // label.setObjectText('BARCODE', barcodeData.toUpperCase());
     label.setObjectText('TEXT_1', plate.toUpperCase());
     // label.print('DYMO LabelWriter Wireless on DYMOLWW113A9A');
     label.print('DYMO LabelWriter 400');
@@ -511,9 +486,9 @@ class Create extends Component {
                     <Button
                       variant="contained"
                       color="secondary"
-                      href="/scan"
+                      href="/search"
                     >
-                      Scan
+                      Search
                     </Button>
                   </Grid>
                   <Grid item>

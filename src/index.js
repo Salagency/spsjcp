@@ -5,7 +5,8 @@ import './index.css';
 // import App from './components/App';
 import Home from './components/home/home';
 import Create from './components/create/create';
-import Scan from './components/scan/scan';
+import Search from './components/search/search';
+import Admin from './components/admin/admin';
 import registerServiceWorker from './registerServiceWorker';
 
 ReactDOM.render(
@@ -17,7 +18,8 @@ ReactDOM.render(
   >
     <Route path="/" component={Home} />
     <Route path="/create" component={Create} />
-    <Route path="/scan" component={Scan} />
+    <Route path="/search" component={Search} />
+    <Route path="/admin" component={Admin} />
   </Router>
 , document.getElementById('root')
 );

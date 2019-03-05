@@ -66,8 +66,8 @@ function Home(props) {
                   </Button>
                 </Grid>
                 <Grid item>
-                  <Button href="/scan" variant="outlined" size="large" color="primary">
-                    Scan Paper Ticket
+                  <Button href="/search" variant="outlined" size="large" color="primary">
+                    Search Tickets
                   </Button>
                 </Grid>
               </Grid>
@@ -85,6 +85,9 @@ function Home(props) {
               </Grid> */}
             </div>
           </div>
+          <Button href="/admin" variant="outlined" size="small" color="primary">
+            Admin
+          </Button>
         </div>
       </main>
     </React.Fragment>
