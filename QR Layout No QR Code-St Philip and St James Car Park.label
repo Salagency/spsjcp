@@ -1,159 +1,163 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <ContinuousLabel Version="8.0" Units="twips">
-  <PaperOrientation>Portrait</PaperOrientation>
-  <Id>Continuous</Id>
-  <PaperName>30270 Continuous</PaperName>
-  <LengthMode>Auto</LengthMode>
-  <LabelLength>0</LabelLength>
-  <RootCell>
-    <Length>0</Length>
-    <LengthMode>Auto</LengthMode>
-    <BorderWidth>0</BorderWidth>
-    <BorderStyle>Solid</BorderStyle>
-    <BorderColor Alpha="255" Red="0" Green="0" Blue="0"/>
-    <SubcellsOrientation>Vertical</SubcellsOrientation>
-    <Subcells>
-      <Cell>
-        <TextObject>
-          <Name>TEXT</Name>
-          <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
-          <BackColor Alpha="0" Red="255" Green="255" Blue="255"/>
-          <LinkedObjectName></LinkedObjectName>
-          <Rotation>Rotation0</Rotation>
-          <IsMirrored>False</IsMirrored>
-          <IsVariable>False</IsVariable>
-          <HorizontalAlignment>Center</HorizontalAlignment>
-          <VerticalAlignment>Middle</VerticalAlignment>
-          <TextFitMode>None</TextFitMode>
-          <UseFullFontHeight>True</UseFullFontHeight>
-          <Verticalized>False</Verticalized>
-          <StyledText>
-            <Element>
-              <String>St Philip and St James Car Park
+	<PaperOrientation>Portrait</PaperOrientation>
+	<Id>Continuous</Id>
+	<PaperName>30270 Continuous</PaperName>
+	<LengthMode>Auto</LengthMode>
+	<LabelLength>0</LabelLength>
+	<RootCell>
+		<Length>0</Length>
+		<LengthMode>Auto</LengthMode>
+		<BorderWidth>0</BorderWidth>
+		<BorderStyle>Solid</BorderStyle>
+		<BorderColor Alpha="255" Red="0" Green="0" Blue="0" />
+		<SubcellsOrientation>Vertical</SubcellsOrientation>
+		<Subcells>
+			<Cell>
+				<TextObject>
+					<Name>TEXT</Name>
+					<ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
+					<BackColor Alpha="0" Red="255" Green="255" Blue="255" />
+					<LinkedObjectName />
+					<Rotation>Rotation0</Rotation>
+					<IsMirrored>False</IsMirrored>
+					<IsVariable>False</IsVariable>
+					<GroupID>-1</GroupID>
+					<IsOutlined>False</IsOutlined>
+					<HorizontalAlignment>Center</HorizontalAlignment>
+					<VerticalAlignment>Middle</VerticalAlignment>
+					<TextFitMode>None</TextFitMode>
+					<UseFullFontHeight>True</UseFullFontHeight>
+					<Verticalized>False</Verticalized>
+					<StyledText>
+						<Element>
+							<String xml:space="preserve">St Philip and St James Car Park
 </String>
-              <Attributes>
-                <Font Family="Calibri" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
-                <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
-              </Attributes>
-            </Element>
-            <Element>
-              <String>OPENING HOURS
+							<Attributes>
+								<Font Family="Calibri" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False" />
+								<ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" />
+							</Attributes>
+						</Element>
+						<Element>
+							<String xml:space="preserve">OPENING HOURS
 </String>
-              <Attributes>
-                <Font Family="Calibri" Size="10" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
-                <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
-              </Attributes>
-            </Element>
-            <Element>
-              <String>Mon - Fri 7:00am - 4:00pm
+							<Attributes>
+								<Font Family="Calibri" Size="10" Bold="False" Italic="False" Underline="False" Strikeout="False" />
+								<ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" />
+							</Attributes>
+						</Element>
+						<Element>
+							<String xml:space="preserve">Mon - Fri 7:00am - 4:00pm
 Sat 7:00am - 1:00pm</String>
-              <Attributes>
-                <Font Family="Calibri" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
-                <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
-              </Attributes>
-            </Element>
-          </StyledText>
-        </TextObject>
-        <ObjectMargin Left="0" Right="0" Top="0" Bottom="0"/>
-        <Length>521.6</Length>
-        <LengthMode>Auto</LengthMode>
-        <BorderWidth>0</BorderWidth>
-        <BorderStyle>Solid</BorderStyle>
-        <BorderColor Alpha="255" Red="0" Green="0" Blue="0"/>
-      </Cell>
-      <Cell>
-        <TextObject>
-          <Name>TEXT_1</Name>
-          <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
-          <BackColor Alpha="0" Red="255" Green="255" Blue="255"/>
-          <LinkedObjectName></LinkedObjectName>
-          <Rotation>Rotation0</Rotation>
-          <IsMirrored>False</IsMirrored>
-          <IsVariable>False</IsVariable>
-          <HorizontalAlignment>Center</HorizontalAlignment>
-          <VerticalAlignment>Middle</VerticalAlignment>
-          <TextFitMode>None</TextFitMode>
-          <UseFullFontHeight>True</UseFullFontHeight>
-          <Verticalized>False</Verticalized>
-          <StyledText>
-            <Element>
-              <String>
+							<Attributes>
+								<Font Family="Calibri" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False" />
+								<ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" />
+							</Attributes>
+						</Element>
+					</StyledText>
+				</TextObject>
+				<Length>521.6</Length>
+				<LengthMode>Auto</LengthMode>
+				<BorderWidth>0</BorderWidth>
+				<BorderStyle>Solid</BorderStyle>
+				<BorderColor Alpha="255" Red="0" Green="0" Blue="0" />
+			</Cell>
+			<Cell>
+				<TextObject>
+					<Name>TEXT_1</Name>
+					<ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
+					<BackColor Alpha="0" Red="255" Green="255" Blue="255" />
+					<LinkedObjectName />
+					<Rotation>Rotation0</Rotation>
+					<IsMirrored>False</IsMirrored>
+					<IsVariable>False</IsVariable>
+					<GroupID>-1</GroupID>
+					<IsOutlined>False</IsOutlined>
+					<HorizontalAlignment>Center</HorizontalAlignment>
+					<VerticalAlignment>Middle</VerticalAlignment>
+					<TextFitMode>None</TextFitMode>
+					<UseFullFontHeight>True</UseFullFontHeight>
+					<Verticalized>False</Verticalized>
+					<StyledText>
+						<Element>
+							<String xml:space="preserve">
 PCA 9999</String>
-              <Attributes>
-                <Font Family="Calibri" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
-                <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
-              </Attributes>
-            </Element>
-          </StyledText>
-        </TextObject>
-        <ObjectMargin Left="0" Right="0" Top="0" Bottom="0"/>
-        <Length>700</Length>
-        <LengthMode>Auto</LengthMode>
-        <BorderWidth>0</BorderWidth>
-        <BorderStyle>Solid</BorderStyle>
-        <BorderColor Alpha="255" Red="0" Green="0" Blue="0"/>
-      </Cell>
-      <Cell>
-        <DateTimeObject>
-          <Name>DATE-TIME</Name>
-          <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
-          <BackColor Alpha="0" Red="255" Green="255" Blue="255"/>
-          <LinkedObjectName></LinkedObjectName>
-          <Rotation>Rotation0</Rotation>
-          <IsMirrored>False</IsMirrored>
-          <IsVariable>False</IsVariable>
-          <HorizontalAlignment>Center</HorizontalAlignment>
-          <VerticalAlignment>Middle</VerticalAlignment>
-          <TextFitMode>None</TextFitMode>
-          <UseFullFontHeight>True</UseFullFontHeight>
-          <Verticalized>False</Verticalized>
-          <DateTimeFormat>DayAbbrMonthYear</DateTimeFormat>
-          <Font Family="Calibri" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
-          <PreText></PreText>
-          <PostText></PostText>
-          <IncludeTime>True</IncludeTime>
-          <Use24HourFormat>False</Use24HourFormat>
-        </DateTimeObject>
-        <ObjectMargin Left="0" Right="0" Top="0" Bottom="0"/>
-        <Length>817.0312</Length>
-        <LengthMode>Fixed</LengthMode>
-        <BorderWidth>0</BorderWidth>
-        <BorderStyle>Solid</BorderStyle>
-        <BorderColor Alpha="255" Red="0" Green="0" Blue="0"/>
-      </Cell>
-      <Cell>
-        <TextObject>
-          <Name>TEXT_2</Name>
-          <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
-          <BackColor Alpha="0" Red="255" Green="255" Blue="255"/>
-          <LinkedObjectName></LinkedObjectName>
-          <Rotation>Rotation0</Rotation>
-          <IsMirrored>False</IsMirrored>
-          <IsVariable>False</IsVariable>
-          <HorizontalAlignment>Center</HorizontalAlignment>
-          <VerticalAlignment>Middle</VerticalAlignment>
-          <TextFitMode>None</TextFitMode>
-          <UseFullFontHeight>True</UseFullFontHeight>
-          <Verticalized>False</Verticalized>
-          <StyledText>
-            <Element>
-              <String>Keep this ticket on your person.
+							<Attributes>
+								<Font Family="Calibri" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False" />
+								<ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" />
+							</Attributes>
+						</Element>
+					</StyledText>
+				</TextObject>
+				<Length>700</Length>
+				<LengthMode>Auto</LengthMode>
+				<BorderWidth>0</BorderWidth>
+				<BorderStyle>Solid</BorderStyle>
+				<BorderColor Alpha="255" Red="0" Green="0" Blue="0" />
+			</Cell>
+			<Cell>
+				<DateTimeObject>
+					<Name>DATE-TIME</Name>
+					<ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
+					<BackColor Alpha="0" Red="255" Green="255" Blue="255" />
+					<LinkedObjectName />
+					<Rotation>Rotation0</Rotation>
+					<IsMirrored>False</IsMirrored>
+					<IsVariable>False</IsVariable>
+					<GroupID>-1</GroupID>
+					<IsOutlined>False</IsOutlined>
+					<HorizontalAlignment>Center</HorizontalAlignment>
+					<VerticalAlignment>Middle</VerticalAlignment>
+					<TextFitMode>None</TextFitMode>
+					<UseFullFontHeight>True</UseFullFontHeight>
+					<Verticalized>False</Verticalized>
+					<DateTimeFormat>DayAbbrMonthYear</DateTimeFormat>
+					<Font Family="Calibri" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False" />
+					<PreText />
+					<PostText />
+					<IncludeTime>True</IncludeTime>
+					<Use24HourFormat>False</Use24HourFormat>
+				</DateTimeObject>
+				<Length>817.0312</Length>
+				<LengthMode>Fixed</LengthMode>
+				<BorderWidth>0</BorderWidth>
+				<BorderStyle>Solid</BorderStyle>
+				<BorderColor Alpha="255" Red="0" Green="0" Blue="0" />
+			</Cell>
+			<Cell>
+				<TextObject>
+					<Name>TEXT_2</Name>
+					<ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
+					<BackColor Alpha="0" Red="255" Green="255" Blue="255" />
+					<LinkedObjectName />
+					<Rotation>Rotation0</Rotation>
+					<IsMirrored>False</IsMirrored>
+					<IsVariable>False</IsVariable>
+					<GroupID>-1</GroupID>
+					<IsOutlined>False</IsOutlined>
+					<HorizontalAlignment>Center</HorizontalAlignment>
+					<VerticalAlignment>Middle</VerticalAlignment>
+					<TextFitMode>None</TextFitMode>
+					<UseFullFontHeight>True</UseFullFontHeight>
+					<Verticalized>False</Verticalized>
+					<StyledText>
+						<Element>
+							<String xml:space="preserve">Keep this ticket on your person.
 Do not leave in your vehicle at any time.
 Not Transferable.</String>
-              <Attributes>
-                <Font Family="Calibri" Size="7" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
-                <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
-              </Attributes>
-            </Element>
-          </StyledText>
-        </TextObject>
-        <ObjectMargin Left="0" Right="0" Top="0" Bottom="0"/>
-        <Length>680</Length>
-        <LengthMode>Auto</LengthMode>
-        <BorderWidth>0</BorderWidth>
-        <BorderStyle>Solid</BorderStyle>
-        <BorderColor Alpha="255" Red="0" Green="0" Blue="0"/>
-      </Cell>
-    </Subcells>
-  </RootCell>
+							<Attributes>
+								<Font Family="Calibri" Size="7" Bold="False" Italic="False" Underline="False" Strikeout="False" />
+								<ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" />
+							</Attributes>
+						</Element>
+					</StyledText>
+				</TextObject>
+				<Length>680</Length>
+				<LengthMode>Auto</LengthMode>
+				<BorderWidth>0</BorderWidth>
+				<BorderStyle>Solid</BorderStyle>
+				<BorderColor Alpha="255" Red="0" Green="0" Blue="0" />
+			</Cell>
+		</Subcells>
+	</RootCell>
 </ContinuousLabel>

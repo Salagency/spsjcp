@@ -597,6 +597,8 @@ class Search extends Component {
 
   calculateFare() {
     const { ticketTime, scannedTime, hoursParked } = this.state;
+    const hourlyRate = 6;
+    const dayRate = 25;
     const creationDate = new Date(ticketTime);
     const scannednDate = new Date(scannedTime);
     const ticketCreationDate = new Date(ticketTime).getDate();
@@ -622,8 +624,8 @@ class Search extends Component {
     // console.log(Math.floor(milliDiff.asDays()));
     // console.log(milliDiff.asDays() % 1);
 
-
-    if (hoursParked < 6) {
+    //Original $35 per hr code
+    /*if (hoursParked < 6) {
       totalDue = hoursParked * 6;
     } else if (hoursParked === 6) {
       totalDue = 35;
@@ -634,26 +636,21 @@ class Search extends Component {
       if (ticketCreationDate !== ticketScannedDate && hoursParked < 24) {
         totalDue = remaindingHours > 6 ? 70 : 35 + (remaindingHours * 6)
       }
+    }*/
+
+    if (hoursParked < 6) {
+      totalDue = hoursParked * hourlyRate;
+    } else if (hoursParked === 6) {
+      totalDue = dayRate;
+    } else if (hoursParked > 6) {
+      totalDue = totalDays * dayRate;
+      totalDue = remaindingHours > 6 ? totalDue + dayRate : totalDue + (remaindingHours * hourlyRate);
+
+      if (ticketCreationDate !== ticketScannedDate && hoursParked < 24) {
+        totalDue = remaindingHours > 6 ? 70 : dayRate + (remaindingHours * hourlyRate)
+      }
     }
-    // } else if (hoursParked > 6 && ticketCreationMonth <= ticketScannedMonth) {
-    //   const timeSpentToday = moment().startOf('day').fromNow();
-    //   const diff = new moment.duration(scannednDate - creationDate);
-    //   console.log(diff);
-    //   totalDays = Math.floor(diff.asDays());
-    //
-    //   if (timeSpentToday.indexOf('minutes') > -1) {
-    //     totalDue = 6 + (totalDays * 35);
-    //     console.log(totalDue);
-    //   } else {
-    //     remaindingHours = (moment().startOf('day').fromNow()).replace('hour ago', '').replace('hours ago', '').replace('minutes ago', '');
-    //     remaindingHours = remaindingHours - 7;
-    //     totalDue = remaindingHours * 6 > 35 ? 35 + (totalDays * 35) : remaindingHours * 6 + (totalDays * 35);
-    //
-    //     console.log(totalDue);
-    //   }
-    // } else if (hoursParked > 6 && ticketCreationDate === ticketScannedDate) {
-    //   totalDue = hoursParked * 6 > 35 ? 35 : hoursParked * 6;
-    // }
+
 
     // console.log(hoursParked > 6);
     // console.log(ticketCreationMonth);
@@ -715,6 +712,112 @@ class Search extends Component {
       totalDue
     });
   }
+
+
+  /*calculateFare() {
+    const { ticketTime, scannedTime, hoursParked } = this.state;
+    const creationDate = new Date(ticketTime);
+    const scannednDate = new Date(scannedTime);
+    const ticketCreationDate = new Date(ticketTime).getDate();
+    const ticketCreationMonth = new Date(ticketTime).getMonth();
+    const ticketCreationYear = new Date(ticketTime).getYear();
+    const ticketScannedDate = new Date(scannedTime).getDate();
+    const ticketScannedMonth = new Date(scannedTime).getMonth();
+    const ticketScannedYear = new Date(scannedTime).getYear();
+    let totalDays = 0;
+    let remaindingHours = 0;
+    let totalDue = 0;
+
+    const milliTicket = ticketTime.getTime();
+    const milliScan = scannedTime.getTime();
+    const milliDiff = new moment.duration(milliScan - milliTicket);
+
+    totalDays = Math.floor(milliDiff.asDays());
+    remaindingHours = Math.floor((milliDiff.asDays() % 1) * 24);
+
+    // console.log(hoursParked);
+    // console.log(milliScan - milliTicket);
+    // console.log(milliDiff);
+    // console.log(Math.floor(milliDiff.asDays()));
+    // console.log(milliDiff.asDays() % 1);
+
+
+    if (hoursParked < 6) {
+      totalDue = hoursParked * 6;
+    } else if (hoursParked === 6) {
+      totalDue = 35;
+    } else if (hoursParked > 6) {
+      totalDue = totalDays * 35;
+      totalDue = remaindingHours > 6 ? totalDue + 35 : totalDue + (remaindingHours * 6);
+
+      if (ticketCreationDate !== ticketScannedDate && hoursParked < 24) {
+        totalDue = remaindingHours > 6 ? 70 : 35 + (remaindingHours * 6)
+      }
+    }
+
+
+    // console.log(hoursParked > 6);
+    // console.log(ticketCreationMonth);
+    // console.log(ticketScannedMonth);
+    // console.log(ticketCreationDate);
+    // console.log(ticketScannedDate);
+    // console.log(ticketCreationDate < ticketScannedDate);
+    // console.log(hoursParked);
+    // console.log(totalDue);
+
+    let db;
+    const { timeStamp } = this.state;
+    const openDBRequest = indexedDB.open('CarparkDB', 1);
+    openDBRequest.onsuccess = (e) => {
+      db = e.target.result;
+      const transaction = db.transaction(['store'], 'readwrite');
+      const objectStore = transaction.objectStore('store');
+      const openRequest = objectStore.openCursor();
+      openRequest.onsuccess = (e) => {
+        // console.log('asdf');
+        const cursor = e.target.result;
+        if (cursor) {
+          // console.log(timeStamp);
+          // console.log(cursor.value.timeStamp);
+          // console.log(timeStamp.toString() === cursor.value.timeStamp.toString());
+          // console.log(cursor.value.plate);
+
+          if (cursor.value.timeStamp.toString() === timeStamp.toString()) {
+            // console.log("Found IT: " + JSON.stringify(cursor.value));
+            if (cursor.value.paid) {
+              this.setState({
+                ticketPaid: true,
+                searchFeedback: 'No unpaid results found'
+              }, () => {
+                this.notify(`No unpaid tickets found!`, 'error');
+              });
+            }
+          }
+          cursor.continue();
+        } else {
+          // this.notify(`No results found`, 'error');
+        }
+      }
+
+      openRequest.onerror = (e) => {
+        this.notify(`No results found`, 'error');
+        console.dir(e);
+      };
+    }
+
+    openDBRequest.onerror = (e) => {
+      this.notify(`Database Connection Error`, 'error');
+      console.dir(e);
+    };
+
+    this.setState({
+      totalDays,
+      remaindingHours,
+      totalDue
+    });
+  }*/
+
+
 
   updatePaymentRecord() {
     let db;
@@ -929,11 +1032,11 @@ class Search extends Component {
                               {totalDays >= 1 ?
                                 <div>
                                   Days: {`${totalDays}days ${remaindingHours}hours`}<br />
-                                  Calculation: {`(${totalDays} days x $35) + (${remaindingHours} hours x $6) to a maximum of $35 per day`}<br />
+                                  Calculation: {`(${totalDays} days x $25) + (${remaindingHours} hours x $6) to a maximum of $25 per day`}<br />
                                 </div>
                               :
                                 <div>
-                                  Calculation: {`(${hoursParked} hours x $6) to a maximum of $35 per day`}<br />
+                                  Calculation: {`(${hoursParked} hours x $6) to a maximum of $25 per day`}<br />
                                 </div>
                               }
                               <b>TOTAL DUE: {`$${totalDue}`}</b>
